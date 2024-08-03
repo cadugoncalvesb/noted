@@ -45,24 +45,42 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public boolean validations() {
+        String email = binding.editTextEmail.getText().toString();
 
         if (binding.editTextEmail.getText().toString().isEmpty()){
             binding.textInputLayoutEmail.setError("Campo obrigatório");
             binding.editTextEmail.requestFocus();
             return false;
-        }
+
+        } else binding.textInputLayoutEmail.setError(null);
+
+        if (!isEmailValid(email)){
+            binding.textInputLayoutEmail.setError("E-mail inválido");
+            binding.editTextEmail.requestFocus();
+            return false;
+
+        } else binding.textInputLayoutEmail.setError(null);
+
         if (binding.editTextPassword.getText().toString().isEmpty()){
             binding.textInputLayoutPassword.setError("Campo obrigatório");
             binding.editTextPassword.requestFocus();
             return false;
-        }
+
+        } else binding.textInputLayoutPassword.setError(null);
+
         if (binding.editTextPassword.getText().toString().length() < 6){
             binding.textInputLayoutPassword.setError("A senha deve ter no mínimo 6 caracteres");
             binding.editTextPassword.requestFocus();
             return false;
-        }
+
+        } else binding.textInputLayoutPassword.setError(null);
 
         return true;
+    }
+
+    private boolean isEmailValid(String email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+
     }
 
     private void loginFirebase() {

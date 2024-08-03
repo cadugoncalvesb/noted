@@ -55,30 +55,43 @@ public class CadastroActivity extends AppCompatActivity {
             binding.textInputLayoutNome.setError("Campo obrigatório");
             binding.editTextNome.requestFocus();
             return false;
-        }
+
+        } else binding.textInputLayoutNome.setError(null);
 
         if (binding.editTextCadastroEmail.getText().toString().isEmpty()){
             binding.textInputLayoutCadastroEmail.setError("Campo obrigatório");
             binding.editTextCadastroEmail.requestFocus();
             return false;
-        }
+
+        } else binding.textInputLayoutCadastroEmail.setError(null);
+
         if (!isEmailValid(email)){
             binding.textInputLayoutCadastroEmail.setError("E-mail inválido");
             binding.editTextCadastroEmail.requestFocus();
             return false;
-        }
+
+        } else binding.textInputLayoutCadastroEmail.setError(null);
+
         if (binding.editTextCadastroPassword.getText().toString().isEmpty()){
             binding.textInputLayoutCadastroPassword.setError("Campo obrigatório");
             binding.editTextCadastroPassword.requestFocus();
             return false;
-        }
+
+        } else binding.textInputLayoutCadastroPassword.setError(null);
+
         if (binding.editTextCadastroPassword.getText().toString().length() < 6){
             binding.textInputLayoutCadastroPassword.setError("A senha deve ter no mínimo 6 caracteres");
             binding.editTextCadastroPassword.requestFocus();
             return false;
-        }
+
+        } else binding.textInputLayoutCadastroPassword.setError(null);
 
         return true;
+    }
+
+    private boolean isEmailValid(String email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+
     }
 
     private void createAccountFirebase() {
@@ -96,10 +109,5 @@ public class CadastroActivity extends AppCompatActivity {
                 Toast.makeText(this, "Ocorreu um erro: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
             }
         });
-    }
-
-    private boolean isEmailValid(String email) {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
-
     }
 }

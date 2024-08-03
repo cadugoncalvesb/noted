@@ -48,14 +48,28 @@ public class RecoverPasswordActivity extends AppCompatActivity {
     }
 
     public boolean validations() {
+        String email = binding.editTextEmailRecover.getText().toString();
 
         if (binding.editTextEmailRecover.getText().toString().isEmpty()){
             binding.textInputLayoutEmailRecover.setError("Campo obrigatório");
             binding.editTextEmailRecover.requestFocus();
             return false;
-        }
+
+        } else binding.textInputLayoutEmailRecover.setError(null);
+
+        if (!isEmailValid(email)){
+            binding.textInputLayoutEmailRecover.setError("E-mail inválido");
+            binding.editTextEmailRecover.requestFocus();
+            return false;
+
+        } else binding.textInputLayoutEmailRecover.setError(null);
 
         return true;
+    }
+
+    private boolean isEmailValid(String email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+
     }
 
     private void recoverPasswordFirebase() {
