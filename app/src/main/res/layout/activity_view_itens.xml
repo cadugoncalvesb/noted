@@ -5,32 +5,34 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".ViewItensActivity">
 
     <TextView
-        android:id="@+id/textViewMyLists"
+        android:id="@+id/textViewNameList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Minhas Listas"
-        android:textSize="30sp"
+        android:layout_marginTop="32dp"
+        android:text="Nome da lista"
+        android:textSize="20dp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
-        android:id="@+id/btnSignOut"
+        android:id="@+id/btnBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="39dp"
         android:src="@drawable/arrow_back"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewMyLists"
+        android:id="@+id/recyclerViewItens"
+        tools:listitem="@layout/card_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -38,20 +40,18 @@
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewMyLists"
-        tools:listitem="@layout/card_list" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewNameList" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/btnNewList"
+        android:id="@+id/btnNewItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nova Lista"
+        android:text="Adiconar"
         android:backgroundTint="@color/md_theme_secondary"
         android:textColor="#FFFFFF"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
