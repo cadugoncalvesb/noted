@@ -1,5 +1,7 @@
 package com.example.projetointegrador;
 
+import static android.app.PendingIntent.getActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -27,11 +29,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ViewItensActivity extends AppCompatActivity implements OnItemClickListener{
 
-    private DatabaseReference mDatabase;
     private ActivityViewItensBinding binding;
+    private DatabaseReference mDatabase;
     private BottomSheetBinding bottomSheetBinding;
 
     private RecyclerView recyclerViewItens;
@@ -42,30 +45,23 @@ public class ViewItensActivity extends AppCompatActivity implements OnItemClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-
-        FirebaseApp.initializeApp(this);
-        mDatabase = FirebaseDatabase.getInstance().getReference("items");
-
         binding = ActivityViewItensBinding.inflate(getLayoutInflater());
         bottomSheetBinding = BottomSheetBinding.inflate(LayoutInflater.from(this));
-
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
         bottomSheetDialog.setContentView(bottomSheetBinding.getRoot());
-
-        recyclerViewItens = binding.recyclerViewItens;
-        recyclerViewItens.setLayoutManager(new LinearLayoutManager(this));
-        itemAdapter = new ItemAdapter(this, itemList, this);
-        recyclerViewItens.setAdapter(itemAdapter);
-        itemList = new ArrayList<>();
-
-                setContentView(binding.getRoot());
+        setContentView(binding.getRoot());
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        loadItemsFromFirebase();
+        FirebaseApp.initializeApp(this);
+        mDatabase = FirebaseDatabase.getInstance().getReference("items");
+        itemList = new ArrayList<>();
+        itemAdapter = new ItemAdapter(this, itemList, this);
+        recyclerViewItens = binding.recyclerViewItens;
+        recyclerViewItens.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewItens.setAdapter(itemAdapter);
 
         findViewById(R.id.btnNewItem).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,63 +71,37 @@ public class ViewItensActivity extends AppCompatActivity implements OnItemClickL
             }
         });
 
-        binding.btnBack.setOnClickListener(v -> {
-            finish();
-            startActivity(new Intent(this, MainActivity.class));
-        });
-
+        binding.btnBack.setOnClickListener(v -> { finish(); startActivity(new Intent(this, MainActivity.class));});
         binding.btnNewItem.setOnClickListener(v -> bottomSheetDialog.show());
 
         bottomSheetBinding.btnAddNewItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String newItem = bottomSheetBinding.editTextNewItem.getText().toString();
+                String newItem = bottomSheetBinding.editTextNewItem.getText().toString().trim();
                 if (!newItem.isEmpty()) {
-                    bottomSheetDialog.dismiss();
-                } else {
-                    bottomSheetBinding.textInputLayoutNewItem.setError("Insira um item na lista");
-                }
+                    Item item = new Item("", newItem, false, "");
+                    addItemToRecyclerView(newItem);
+                    bottomSheetBinding.textInputLayoutNewItem.setError(null); // Limpa o erro, se houver
+                    bottomSheetBinding.editTextNewItem.setText(""); // Limpa o campo de texto
+                } else bottomSheetBinding.textInputLayoutNewItem.setError("Insira um item");
             }
         });
     }
 
-    public void addItem(String itemName) {
+    private void addItemToRecyclerView(String newItem) {
+        // Adiciona o novo item à lista
+        itemList.add(new Item(UUID.randomUUID().toString(), newItem, false, ""));
 
-        String itemId = mDatabase.push().getKey(); // Gera um id único para o item
-        if (itemId != null) {
-            Item item = new Item(itemId, itemName, false);
-            mDatabase.child(itemId).setValue(item)
-                    .addOnSuccessListener(aVoid ->
-                            Toast.makeText(ViewItensActivity.this, "Item added successfully", Toast.LENGTH_SHORT).show())
-                    .addOnFailureListener(e ->
-                            Toast.makeText(ViewItensActivity.this, "Failed to add item", Toast.LENGTH_SHORT).show());
-        }
-    }
+        // Notifica o adaptador que um item foi adicionado
+        itemAdapter.notifyItemInserted(itemList.size() - 1);
 
-    private void loadItemsFromFirebase() {
-        mDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                itemList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Item item = snapshot.getValue(Item.class);
-                    if (item != null) {
-                        itemList.add(item);
-                    }
-                }
-                itemAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(ViewItensActivity.this, "Failed to load items", Toast.LENGTH_SHORT).show();
-            }
-        });
+        // Rolagem para o fim da lista para mostrar o novo item
+        recyclerViewItens.scrollToPosition(itemList.size() - 1);
     }
 
     @Override
-    public void onItemClick(Item item) {
-        Toast.makeText(this, "Item clicado: " + item.getNameItem(), Toast.LENGTH_SHORT).show();
+    public void onItemClick(int position) {
+
     }
 }
 

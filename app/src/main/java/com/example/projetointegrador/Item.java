@@ -2,6 +2,7 @@ package com.example.projetointegrador;
 
 public class Item {
     public String idItem;
+    public String idList;
     public String nameItem;
     public boolean isChecked;
 
@@ -33,9 +34,18 @@ public class Item {
         isChecked = checked;
     }
 
-    public Item(String idItem, String nameItem, boolean isChecked) {
+    public String getIdList() {
+        return idList;
+    }
+
+    public void setIdList(String idList) {
+        this.idList = idList;
+    }
+
+    public Item(String idItem, String nameItem, boolean isChecked, String idList) {
         this.idItem = idItem;
         this.nameItem = nameItem;
         this.isChecked = isChecked;
+        this.idList = idList;
     }
 }

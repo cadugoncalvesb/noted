@@ -38,7 +38,7 @@ public class AddItemBottomSheet extends BottomSheetDialogFragment {
             public void onClick(View v) {
                 String itemName = editTextNewItem.getText().toString();
                 if (!itemName.isEmpty()) {
-                    viewItensActivity.addItem(itemName);
+                    //viewItensActivity.addItem(itemName);
                     dismiss();
 
                 } else Toast.makeText(viewItensActivity, "Adicione o nome do item", Toast.LENGTH_SHORT).show();

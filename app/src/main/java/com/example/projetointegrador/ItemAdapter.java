@@ -10,18 +10,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ItemAdapter  extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
+public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
-    Context context;
     private List<Item> itemList;
     private OnItemClickListener listener;
 
     public ItemAdapter(Context context, List<Item> itemList, OnItemClickListener listener) {
-        this.context = context;
-        this.itemList = itemList != null ? itemList : new ArrayList<>(); // Inicialize a lista se estiver null
+        this.itemList = itemList;
         this.listener = listener;
     }
 
@@ -29,7 +26,7 @@ public class ItemAdapter  extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(context).inflate(R.layout.card_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_item, parent, false);
         return new ViewHolder(view, listener);
     }
 
@@ -38,7 +35,6 @@ public class ItemAdapter  extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         Item item = itemList.get(position);
         holder.textViewNameItem.setText(item.getNameItem());
         holder.checkBox.setChecked(item.isChecked());
-        holder.bind(item, listener);
     }
 
     @Override
@@ -51,17 +47,20 @@ public class ItemAdapter  extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         TextView textViewNameItem;
         CheckBox checkBox;
 
-        public ViewHolder(View view, OnItemClickListener listener) {
-            super(view);
+        public ViewHolder(View itemView, final OnItemClickListener listener) {
+            super(itemView);
             textViewNameItem = itemView.findViewById(R.id.textViewNameItem);
             checkBox = itemView.findViewById(R.id.checkBox);
-        }
 
-        public void bind(final Item item, final OnItemClickListener listener) {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onItemClick(item);
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(position);
+                        }
+                    }
                 }
             });
         }
