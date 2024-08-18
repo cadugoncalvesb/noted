@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <com.google.android.material.bottomsheet.BottomSheetDragHandleView
@@ -14,7 +15,7 @@
         android:layout_height="wrap_content"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="10dp">
+        app:helperText=" ">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextNewItem"
@@ -31,8 +32,8 @@
         android:layout_height="50dp"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="20dp"
         android:text="Adicionar"
-        android:textColorHint="@color/md_theme_onSecondary"/>
+        android:textColor="@color/md_theme_onBackground"/>
 
 </LinearLayout>

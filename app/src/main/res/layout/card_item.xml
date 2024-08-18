@@ -32,9 +32,17 @@
                 android:text="Item"
                 android:textSize="20sp"
                 android:textStyle="bold"/>
-
         </LinearLayout>
 
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/imageBtnDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/delete"
+        android:layout_gravity="end"
+        android:layout_margin="16dp"
+        android:background="@android:color/transparent"/>
 
 </com.google.android.material.card.MaterialCardView>

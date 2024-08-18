@@ -1,10 +1,10 @@
-package com.example.projetointegrador;
+package com.example.projetointegrador.db;
 
 public class Item {
     public String idItem;
     public String idList;
     public String nameItem;
-    public boolean isChecked;
+    public boolean checked;
 
     public Item(){
 
@@ -26,12 +26,12 @@ public class Item {
         this.nameItem = nameItem;
     }
 
-    public boolean isChecked() {
-        return isChecked;
+    public boolean checked() {
+        return checked;
     }
 
     public void setChecked(boolean checked) {
-        isChecked = checked;
+        this.checked = checked;
     }
 
     public String getIdList() {
@@ -42,10 +42,9 @@ public class Item {
         this.idList = idList;
     }
 
-    public Item(String idItem, String nameItem, boolean isChecked, String idList) {
-        this.idItem = idItem;
+    public Item(String nameItem, boolean checked, String idList) {
         this.nameItem = nameItem;
-        this.isChecked = isChecked;
+        this.checked = checked;
         this.idList = idList;
     }
 }

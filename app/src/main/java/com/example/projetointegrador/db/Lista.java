@@ -1,21 +1,23 @@
-package com.example.projetointegrador;
+package com.example.projetointegrador.db;
 
 import java.util.Date;
 
 public class Lista {
     public String idList;
+    public String idUser;
+    public String admin;
     public String nameList;
     public Date dateModification;
-    public String criador;
 
     public Lista(){
 
     }
 
-    public Lista(String nameList, Date dateModification, String idList, String criador){
+    public Lista(String idList, Date dateModification, String nameList, String admin){
+        this.idList = idList;
         this.nameList = nameList;
         this.dateModification = dateModification;
-        this.idList = idList;
+        this.admin = admin;
     }
     public String getIdList() {
         return idList;
@@ -41,15 +43,12 @@ public class Lista {
         this.dateModification = dateModification;
     }
 
-    public String getCriador() {
-        return criador;
+    public String getAdmin() {
+        return admin;
     }
 
-    public void setCriador(String criador) {
-        this.criador = criador;
+    public void setAdmin(String admin) {
+        this.admin = admin;
     }
 
-    public Item get(int position) {
-        return null;
-    }
 }
