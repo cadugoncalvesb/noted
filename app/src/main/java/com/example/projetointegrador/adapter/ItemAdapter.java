@@ -51,7 +51,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
         Log.d("ItemAdapter", "itemId na onBindViewHolder: " + idItem);
 
-        // TODO: só está atualizando os itens que já estão armazenados
+        // TODO: precisa estar online
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean checked) {
@@ -125,7 +125,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 });
     }
 
-    //TODO: só está deletando os itens que já estão armazenados
+    //TODO: precisa estar online
     private void deleteItemFirebase(String idItem) {
         if (idItem == null || idItem.isEmpty()) {
             Log.e("Firebase", "O ID do item não pode ser nulo ou vazio.");
@@ -138,9 +138,18 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        itemList.removeIf(item -> item.getIdItem().equals(idItem));
-                        notifyDataSetChanged();
-                        Log.d("Firebase", "Item deletado com sucesso");
+                        //itemList.removeIf(item -> item.getIdItem().equals(idItem));
+                        int position = -1;
+                        for (int i = 0; i < itemList.size(); i++){
+                            if (itemList.get(i).getIdItem().equals(idItem)){
+                                position = i;
+                                break;
+                            }
+                        }
+                        if (position != -1){
+                            itemList.remove(position);
+                            notifyItemRemoved(position);
+                        }
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

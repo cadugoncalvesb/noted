@@ -88,8 +88,9 @@ public class ViewItensActivity extends AppCompatActivity implements OnItemClickL
                     bottomSheetBinding.textInputLayoutNewItem.setError("Insira um item");
                     return;
                 }
-                addItemToRecyclerView(new Item(newItem, false, null));
+                Item item = new Item(newItem, false, null);
                 addItemFirebase(new Item(newItem, false, null));
+                //addItemToRecyclerView(new Item(newItem, false, null));
 
                 bottomSheetBinding.textInputLayoutNewItem.setError(null);
                 bottomSheetBinding.editTextNewItem.setText("");
@@ -127,6 +128,7 @@ public class ViewItensActivity extends AppCompatActivity implements OnItemClickL
 
                     documentReference.update("idItem", itemId)
                             .addOnSuccessListener(aVoid -> {
+                                addItemToRecyclerView(item);
                                 Log.d("FirebaseSucess", "ID do item atualizado com sucesso");
                             })
                             .addOnFailureListener(e ->
