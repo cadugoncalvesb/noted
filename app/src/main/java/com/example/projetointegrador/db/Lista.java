@@ -7,17 +7,18 @@ public class Lista {
     public String idUser;
     public String admin;
     public String nameList;
-    public Date dateModification;
+    public String dateModification;
 
     public Lista(){
 
     }
 
-    public Lista(String idList, Date dateModification, String nameList, String admin){
+    public Lista(String idList, String idUser, String admin, String nameList, String dateModification){
         this.idList = idList;
+        this.idUser = idUser;
+        this.admin = admin;
         this.nameList = nameList;
         this.dateModification = dateModification;
-        this.admin = admin;
     }
     public String getIdList() {
         return idList;
@@ -35,11 +36,11 @@ public class Lista {
         this.nameList = nameList;
     }
 
-    public Date getDateModification() {
+    public String getDateModification() {
         return dateModification;
     }
 
-    public void setDateModification(Date dateModification) {
+    public void setDateModification(String dateModification) {
         this.dateModification = dateModification;
     }
 

@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -25,21 +23,17 @@ import com.example.projetointegrador.databinding.ActivityViewItensBinding;
 import com.example.projetointegrador.databinding.BottomSheetBinding;
 import com.example.projetointegrador.db.Item;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-public class ViewItensActivity extends AppCompatActivity implements OnItemClickListener {
+public class ItemActivity extends AppCompatActivity implements OnItemClickListener {
 
     private ActivityViewItensBinding binding;
     private FirebaseFirestore db;
