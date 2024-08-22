@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projetointegrador.adapter.ListaAdapter;
 import com.example.projetointegrador.databinding.ActivityMainBinding;
@@ -22,16 +24,18 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnItemClickListener {
 
     private ActivityMainBinding binding;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
+    private List<Lista> listaList;
     private ListaAdapter listaAdapter;
-    List<Lista> listaList;
+    private RecyclerView recyclerViewMyLists;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
         db = FirebaseFirestore.getInstance();
+        listaList = new ArrayList<>();
+        listaAdapter = new ListaAdapter(listaList, this);
+        recyclerViewMyLists = binding.recyclerViewMyLists;
+        recyclerViewMyLists.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewMyLists.setAdapter(listaAdapter);
 
         loadListFirebase();
 
@@ -77,4 +86,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    @Override
+    public void onItemClick(int position) {
+        
     }
+}

@@ -10,7 +10,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.projetointegrador.adapter.ListaAdapter;
 import com.example.projetointegrador.databinding.ActivityAddListBinding;
 import com.example.projetointegrador.db.Item;
 import com.example.projetointegrador.db.Lista;
@@ -66,15 +68,13 @@ public class AddListActivity extends AppCompatActivity {
 
                     documentReference.update("idList", listId)
                             .addOnSuccessListener(aVoid -> {
-                                //addListToRecyclerView(lista);
-                                Log.d("FirebaseSucess", "ID do item atualizado com sucesso");
+                                Log.d("FirebaseSucess", "ID da lista atualizado com sucesso");
                             })
                             .addOnFailureListener(e ->
-                                    Log.e("FirebaseError", "Falha ao atualizar ID do item"));
-
+                                    Log.e("FirebaseError", "Falha ao atualizar ID da lista"));
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Erro ao adicionar item", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Erro ao adicionar lista", Toast.LENGTH_SHORT).show();
                 });
     }
 }
