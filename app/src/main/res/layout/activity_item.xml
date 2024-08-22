@@ -47,12 +47,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Adiconar"
-        android:backgroundTint="@color/md_theme_secondary"
-        android:textColor="#FFFFFF"
+        android:backgroundTint="@color/md_theme_onError"
+        android:textColor="@color/md_theme_onSurface"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="32dp"
         app:icon="@drawable/add"
-        app:iconTint="@color/md_theme_onPrimary"
+        app:iconTint="@color/md_theme_onSurface"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

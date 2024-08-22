@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <color name="md_theme_primary">#A1D39A</color>
     <color name="md_theme_onPrimary">#0A390F</color>
     <color name="md_theme_primaryContainer">#245024</color>

@@ -89,6 +89,10 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
 
     @Override
     public void onItemClick(int position) {
-        
+        Lista lista = listaList.get(position);
+        Intent intent = new Intent(this, ItemActivity.class);
+
+        finish();
+        startActivity(intent);
     }
 }

@@ -38,6 +38,8 @@ public class AddListActivity extends AppCompatActivity {
         });
         db = FirebaseFirestore.getInstance();
 
+        binding.editTextAddNewList.requestFocus();
+
         binding.btnBack.setOnClickListener(v -> {
             finish();
             startActivity(new Intent(this, MainActivity.class));

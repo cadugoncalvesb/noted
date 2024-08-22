@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projetointegrador.adapter.ItemAdapter;
-import com.example.projetointegrador.databinding.ActivityViewItensBinding;
+import com.example.projetointegrador.databinding.ActivityItemBinding;
 import com.example.projetointegrador.databinding.BottomSheetBinding;
 import com.example.projetointegrador.db.Item;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,7 +35,7 @@ import java.util.List;
 
 public class ItemActivity extends AppCompatActivity implements OnItemClickListener {
 
-    private ActivityViewItensBinding binding;
+    private ActivityItemBinding binding;
     private FirebaseFirestore db;
     private BottomSheetBinding bottomSheetBinding;
 
@@ -47,7 +47,7 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        binding = ActivityViewItensBinding.inflate(getLayoutInflater());
+        binding = ActivityItemBinding.inflate(getLayoutInflater());
         bottomSheetBinding = BottomSheetBinding.inflate(LayoutInflater.from(this));
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
         bottomSheetDialog.setContentView(bottomSheetBinding.getRoot());
@@ -74,6 +74,8 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
 
         binding.btnNewItem.setOnClickListener(v -> bottomSheetDialog.show());
 
+        bottomSheetDialog.setOnShowListener(dialog -> bottomSheetBinding.editTextNewItem.requestFocus());
+        //bottomSheetDialog.setOnDismissListener(dialog -> bottomSheetBinding.editTextNewItem.clearFocus());
         bottomSheetBinding.btnAddNewItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,6 +90,7 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
 
                 bottomSheetBinding.textInputLayoutNewItem.setError(null);
                 bottomSheetBinding.editTextNewItem.setText("");
+
             }
         });
     }
