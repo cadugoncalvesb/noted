@@ -37,6 +37,7 @@
         android:layout_marginTop="16dp"
         android:text="Informe o nome da lista"
         android:textSize="20dp"
+        android:textColor="@color/md_theme_onSurface"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
@@ -50,7 +51,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:helperText=" ">
+        app:helperText=" "
+        app:hintEnabled="false">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextAddNewList"
@@ -68,7 +70,7 @@
         android:layout_marginBottom="32dp"
         android:layout_marginHorizontal="30dp"
         android:text="Criar"
-        android:textColor="@color/md_theme_onBackground"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
