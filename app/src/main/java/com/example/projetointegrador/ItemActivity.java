@@ -31,7 +31,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ItemActivity extends AppCompatActivity implements OnItemClickListener {
 
@@ -84,9 +86,8 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
                     bottomSheetBinding.textInputLayoutNewItem.setError("Insira um item");
                     return;
                 }
-                Item item = new Item(newItem, false, null);
-                addItemFirebase(new Item(newItem, false, null));
-                //addItemToRecyclerView(new Item(newItem, false, null));
+                Item item = new Item(null, newItem, false);
+                addItemFirebase(item);
 
                 bottomSheetBinding.textInputLayoutNewItem.setError(null);
                 bottomSheetBinding.editTextNewItem.setText("");
@@ -116,21 +117,18 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
     }
 
     public void addItemFirebase(Item item) {
+
+        Map<String, Object> itemData = new HashMap<>();
+        itemData.put("idList", item.getIdList());
+        itemData.put("nameItem", item.getNameItem());
+        itemData.put("checked", item.checked());
+
         db.collection("items")
-                .add(item)
+                .add(itemData)
                 .addOnSuccessListener(documentReference -> {
-
-                    String itemId = documentReference.getId();
-                    item.setIdItem(itemId);
-
-                    documentReference.update("idItem", itemId)
-                            .addOnSuccessListener(aVoid -> {
-                                addItemToRecyclerView(item);
-                                Log.d("FirebaseSucess", "ID do item atualizado com sucesso");
-                            })
-                            .addOnFailureListener(e ->
-                                    Log.e("FirebaseError", "Falha ao atualizar ID do item"));
-
+                    item.setIdItem(documentReference.getId());
+                    addItemToRecyclerView(item);
+                    Log.d("FirebaseSucess", "ID do item atualizado com sucesso");
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Erro ao adicionar item", Toast.LENGTH_SHORT).show();

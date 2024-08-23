@@ -18,7 +18,9 @@ import com.example.projetointegrador.db.Item;
 import com.example.projetointegrador.db.Lista;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AddListActivity extends AppCompatActivity {
 
@@ -52,28 +54,29 @@ public class AddListActivity extends AppCompatActivity {
                 binding.textInputLayoutNewList.setError("Informe o nome da nova lista");
                 return;
             }
-            Lista lista = new Lista(null, null, null, newList, null);
+            Lista lista = new Lista(null, null, newList, null, null);
             addListFirebase(lista);
             Toast.makeText(this, "Lista criada com sucesso!", Toast.LENGTH_SHORT).show();
-            //binding.editTextAddNewList.setText("");
             startActivity(new Intent(this, ItemActivity.class));
         });
     }
 
     public void addListFirebase(Lista lista) {
+
+        Map<String, Object> listData = new HashMap<>();
+        listData.put("admin", lista.getAdmin());
+        listData.put("idUser", lista.getIdUser());
+        listData.put("nameList", lista.getNameList());
+        listData.put("dateCreate", lista.getDateCreate());
+        listData.put("dataModification", lista.getDateModification());
+
         db.collection("lists")
-                .add(lista)
+                .add(listData)
                 .addOnSuccessListener(documentReference -> {
 
-                    String listId = documentReference.getId();
-                    lista.setIdList(listId);
+                    lista.setIdList(documentReference.getId());
+                    Log.d("FirebaseSucess", "ID da lista atualizado com sucesso");
 
-                    documentReference.update("idList", listId)
-                            .addOnSuccessListener(aVoid -> {
-                                Log.d("FirebaseSucess", "ID da lista atualizado com sucesso");
-                            })
-                            .addOnFailureListener(e ->
-                                    Log.e("FirebaseError", "Falha ao atualizar ID da lista"));
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Erro ao adicionar lista", Toast.LENGTH_SHORT).show();

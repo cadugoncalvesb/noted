@@ -36,4 +36,13 @@
 
     </LinearLayout>
 
+    <ImageButton
+        android:id="@+id/imageBtnOptions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ellipsis_vertical_outline"
+        android:backgroundTint="@android:color/transparent"
+        android:layout_marginTop="12dp"
+        android:layout_gravity="end"/>
+
 </com.google.android.material.card.MaterialCardView>

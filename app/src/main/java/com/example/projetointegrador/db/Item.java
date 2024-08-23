@@ -10,12 +10,26 @@ public class Item {
 
     }
 
+    public Item(String idList, String nameItem, boolean checked) {
+        this.idList = idList;
+        this.nameItem = nameItem;
+        this.checked = checked;
+    }
+
     public String getIdItem() {
         return idItem;
     }
 
     public void setIdItem(String idItem) {
         this.idItem = idItem;
+    }
+
+    public String getIdList() {
+        return idList;
+    }
+
+    public void setIdList(String idList) {
+        this.idList = idList;
     }
 
     public String getNameItem() {
@@ -32,19 +46,5 @@ public class Item {
 
     public void setChecked(boolean checked) {
         this.checked = checked;
-    }
-
-    public String getIdList() {
-        return idList;
-    }
-
-    public void setIdList(String idList) {
-        this.idList = idList;
-    }
-
-    public Item(String nameItem, boolean checked, String idList) {
-        this.nameItem = nameItem;
-        this.checked = checked;
-        this.idList = idList;
     }
 }

@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <color name="md_theme_primary">#A1D39A</color>
-    <color name="md_theme_onPrimary">#0A390F</color>
+    <color name="md_theme_primary">#60A5E0</color>
+    <color name="md_theme_onPrimary">#1630E4</color>
     <color name="md_theme_primaryContainer">#245024</color>
     <color name="md_theme_onPrimaryContainer">#BCF0B4</color>
     <color name="md_theme_secondary">#FFB4A4</color>
