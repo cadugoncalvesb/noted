@@ -26,6 +26,8 @@ public class AddListActivity extends AppCompatActivity {
 
     private ActivityAddListBinding binding;
     private FirebaseFirestore db;
+    private String idList;
+    private String nameList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +56,10 @@ public class AddListActivity extends AppCompatActivity {
                 binding.textInputLayoutNewList.setError("Informe o nome da nova lista");
                 return;
             }
+
             Lista lista = new Lista(null, null, newList, null, null);
             addListFirebase(lista);
             Toast.makeText(this, "Lista criada com sucesso!", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(this, ItemActivity.class));
         });
     }
 
@@ -75,8 +77,15 @@ public class AddListActivity extends AppCompatActivity {
                 .addOnSuccessListener(documentReference -> {
 
                     lista.setIdList(documentReference.getId());
+                    idList = lista.getIdList();
                     Log.d("FirebaseSucess", "ID da lista atualizado com sucesso");
 
+                    Intent intent = new Intent(this, ItemActivity.class);
+                    intent.putExtra("idList", idList);
+                    System.out.println("Estado do ID: " + idList);
+                    nameList = lista.getNameList();
+                    intent.putExtra("nameList", nameList);
+                    startActivity(intent);
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Erro ao adicionar lista", Toast.LENGTH_SHORT).show();

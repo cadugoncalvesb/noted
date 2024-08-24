@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ellipsis_vertical_outline"
         android:backgroundTint="@android:color/transparent"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="18dp"
         android:layout_gravity="end"/>
 
 </com.google.android.material.card.MaterialCardView>

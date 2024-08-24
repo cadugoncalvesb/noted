@@ -90,7 +90,13 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     @Override
     public void onItemClick(int position) {
         Lista lista = listaList.get(position);
+        String idList = lista.getIdList();
+        String nameList = lista.getNameList();
+
         Intent intent = new Intent(this, ItemActivity.class);
+        intent.putExtra("idList", idList);
+        intent.putExtra("nameList", nameList);
+        System.out.println("Estado do ID na main: " + idList);
 
         finish();
         startActivity(intent);

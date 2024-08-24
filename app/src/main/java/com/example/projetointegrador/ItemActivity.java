@@ -22,6 +22,7 @@ import com.example.projetointegrador.adapter.ItemAdapter;
 import com.example.projetointegrador.databinding.ActivityItemBinding;
 import com.example.projetointegrador.databinding.BottomSheetBinding;
 import com.example.projetointegrador.db.Item;
+import com.example.projetointegrador.db.Lista;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -44,6 +45,7 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
     private RecyclerView recyclerViewItens;
     private ItemAdapter itemAdapter;
     private List<Item> itemList;
+    //private String idList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +70,9 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
         recyclerViewItens.setAdapter(itemAdapter);
 
         loadItemFirebase();
+
+        String nameList = getIntent().getStringExtra("nameList");
+        binding.textViewNameList.setText(nameList);
 
         binding.btnBack.setOnClickListener(v -> {
             finish();
@@ -97,7 +102,12 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
     }
 
     private void loadItemFirebase() {
-        db.collection("items")
+
+        String idList = getIntent().getStringExtra("idList");
+
+        db.collection("lists")
+                .document(idList)
+                .collection("items")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -118,12 +128,16 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
 
     public void addItemFirebase(Item item) {
 
+        String idList = getIntent().getStringExtra("idList");
+
         Map<String, Object> itemData = new HashMap<>();
-        itemData.put("idList", item.getIdList());
+        itemData.put("idList", idList);
         itemData.put("nameItem", item.getNameItem());
         itemData.put("checked", item.checked());
 
-        db.collection("items")
+        db.collection("lists")
+                .document(idList)
+                .collection("items")
                 .add(itemData)
                 .addOnSuccessListener(documentReference -> {
                     item.setIdItem(documentReference.getId());
@@ -131,7 +145,7 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
                     Log.d("FirebaseSucess", "ID do item atualizado com sucesso");
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Erro ao adicionar item", Toast.LENGTH_SHORT).show();
+                    System.out.println("Erro ao adicionar item");
                 });
     }
 
