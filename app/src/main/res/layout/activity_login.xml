@@ -28,7 +28,8 @@
         android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewTitulo">
+        app:layout_constraintTop_toBottomOf="@+id/textViewTitulo"
+        app:helperText=" ">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextEmail"
@@ -47,7 +48,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayoutEmail"
-        app:counterEnabled="true">
+        app:counterEnabled="true"
+        app:helperText=" ">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextPassword"

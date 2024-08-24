@@ -47,28 +47,27 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         holder.textViewNameItem.setText(item.getNameItem());
         holder.checkBox.setChecked(item.checked());
         String idItem = item.getIdItem();
-
-        Log.d("ItemAdapter", "itemId na onBindViewHolder: " + idItem);
+        String idList = item.getIdList();
 
         // TODO: precisa estar online
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean checked) {
-
+                if (idList == null || idList.isEmpty()) {
+                    System.out.println("ID da lista é nulo ou vazio");
+                    return;
+                }
                 if (idItem == null || idItem.isEmpty()) {
                     Log.e("ItemAdapter", "ID do item é nulo ou vazio");
                     return;
                 }
 
-                // Atualiza o estado do item
                 item.setChecked(checked);
-
-                // Atualiza o estado no Firestore
-                updateCheckedFirebase(idItem, checked);
+                updateCheckedFirebase(idList, idItem, checked);
             }
         });
 
-        holder.imageBtnDelete.setOnClickListener(v -> deleteItemFirebase(idItem));
+        holder.imageBtnDelete.setOnClickListener(v -> deleteItemFirebase(idList, idItem));
     }
 
     @Override
@@ -101,12 +100,17 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             });
         }
     }
-    private void updateCheckedFirebase(String idItem, boolean checked){
+    private void updateCheckedFirebase(String idList, String idItem, boolean checked){
+        if (idList == null || idList.isEmpty()) {
+            System.out.println("ID da lista é nulo ou vazio no updateChecked");
+        }
         if (idItem == null || idItem.isEmpty()) {
-            Log.e("ItemAdapter", "ID do item é nulo ou vazio no met. up");
+            System.out.println("ID do item é nulo ou vazio no updateChecked");
             return;
         }
         DocumentReference itemRef = FirebaseFirestore.getInstance()
+                .collection("lists")
+                .document(idList)
                 .collection("items")
                 .document(idItem);
         itemRef.update("checked", checked)
@@ -125,12 +129,17 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     }
 
     //TODO: precisa estar online
-    private void deleteItemFirebase(String idItem) {
+    private void deleteItemFirebase(String idList, String idItem) {
+        if (idList == null || idList.isEmpty()) {
+            System.out.println("ID da lista é nulo ou vazio no deleteItem");
+        }
         if (idItem == null || idItem.isEmpty()) {
-            Log.e("Firebase", "O ID do item não pode ser nulo ou vazio.");
+            System.out.println("ID do item é nulo ou vazio no deleteItem");
             return;
         }
         DocumentReference itemRef = FirebaseFirestore.getInstance()
+                .collection("lists")
+                .document(idList)
                 .collection("items")
                 .document(idItem);
         itemRef.delete()

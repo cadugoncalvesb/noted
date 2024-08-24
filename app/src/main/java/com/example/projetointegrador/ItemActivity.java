@@ -45,7 +45,6 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
     private RecyclerView recyclerViewItens;
     private ItemAdapter itemAdapter;
     private List<Item> itemList;
-    //private String idList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +90,8 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
                     bottomSheetBinding.textInputLayoutNewItem.setError("Insira um item");
                     return;
                 }
-                Item item = new Item(null, newItem, false);
+                String idList = getIntent().getStringExtra("idList");
+                Item item = new Item(idList, newItem, false);
                 addItemFirebase(item);
 
                 bottomSheetBinding.textInputLayoutNewItem.setError(null);
