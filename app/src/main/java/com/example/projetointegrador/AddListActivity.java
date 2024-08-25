@@ -16,6 +16,8 @@ import com.example.projetointegrador.adapter.ListaAdapter;
 import com.example.projetointegrador.databinding.ActivityAddListBinding;
 import com.example.projetointegrador.db.Item;
 import com.example.projetointegrador.db.Lista;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -42,6 +44,10 @@ public class AddListActivity extends AppCompatActivity {
         });
         db = FirebaseFirestore.getInstance();
 
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) System.out.println("User não autenticado");
+        String admin = currentUser.getUid();
+
         binding.editTextAddNewList.requestFocus();
 
         binding.btnBack.setOnClickListener(v -> {
@@ -57,7 +63,7 @@ public class AddListActivity extends AppCompatActivity {
                 return;
             }
 
-            Lista lista = new Lista(null, null, newList, null, null);
+            Lista lista = new Lista(admin, newList, null, null);
             addListFirebase(lista);
             Toast.makeText(this, "Lista criada com sucesso!", Toast.LENGTH_SHORT).show();
         });
@@ -67,7 +73,6 @@ public class AddListActivity extends AppCompatActivity {
 
         Map<String, Object> listData = new HashMap<>();
         listData.put("admin", lista.getAdmin());
-        listData.put("idUser", lista.getIdUser());
         listData.put("nameList", lista.getNameList());
         listData.put("dateCreate", lista.getDateCreate());
         listData.put("dataModification", lista.getDateModification());
@@ -78,17 +83,36 @@ public class AddListActivity extends AppCompatActivity {
 
                     lista.setIdList(documentReference.getId());
                     idList = lista.getIdList();
+                    nameList = lista.getNameList();
                     Log.d("FirebaseSucess", "ID da lista atualizado com sucesso");
+
+                    weakEntity(idList, lista.getAdmin());
 
                     Intent intent = new Intent(this, ItemActivity.class);
                     intent.putExtra("idList", idList);
-                    System.out.println("Estado do ID: " + idList);
-                    nameList = lista.getNameList();
                     intent.putExtra("nameList", nameList);
+                    System.out.println("Estado do ID: " + idList);
                     startActivity(intent);
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Erro ao adicionar lista", Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    private void weakEntity(String idList, String idUser) {
+
+        Map<String, Object> userListData = new HashMap<>();
+        userListData.put("idList", idList);
+        userListData.put("idUser", idUser);
+
+        db.collection("users-lists")
+                .add(userListData)
+                .addOnSuccessListener(documentReference -> {
+                    System.out.println("Usuária associado à lista com sucesso");
+                })
+                .addOnFailureListener(e -> {
+                    System.out.println("Erro ao associar usuário à lista");
+                });
+
     }
 }

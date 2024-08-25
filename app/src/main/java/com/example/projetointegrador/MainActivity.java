@@ -20,6 +20,7 @@ import com.example.projetointegrador.db.Lista;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -58,31 +59,45 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
 
         loadListFirebase();
 
-        binding.btnSignOut.setOnClickListener(v -> {
-            mAuth.signOut();
-            finish();
-            startActivity(new Intent(this, LoginActivity.class));
-        });
-
+        binding.btnProfile.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         binding.btnNewList.setOnClickListener(v -> startActivity(new Intent(this, AddListActivity.class)));
         }
 
     private void loadListFirebase() {
-        db.collection("lists")
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            System.out.println("Usuário não autenticado");
+            return;
+        }
+        String idUser = currentUser.getUid();
+
+        db.collection("users-lists")
+                .whereEqualTo("idUser", idUser)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w("Firestore", "Erro ao carregar listas.", task.getException());
-                        }
-                        listaList.clear();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Lista lista = document.toObject(Lista.class);
-                            lista.setIdList(document.getId());
-                            listaList.add(lista);
-                            listaAdapter.notifyDataSetChanged();
-                        }
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        System.out.println("Erro ao carregar associações de listas: " + task.getException());
+                        return;
+                    }
+
+                    listaList.clear();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String idList = document.getString("idList");
+
+                        // Buscar os detalhes da lista na coleção "lists"
+                        db.collection("lists").document(idList)
+                                .get()
+                                .addOnSuccessListener(listDocument -> {
+                                    if (listDocument.exists()) {
+                                        Lista lista = listDocument.toObject(Lista.class);
+                                        lista.setIdList(idList);
+                                        listaList.add(lista);
+                                        listaAdapter.notifyDataSetChanged();
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.w("Firestore", "Erro ao carregar detalhes da lista.", e);
+                                });
                     }
                 });
     }

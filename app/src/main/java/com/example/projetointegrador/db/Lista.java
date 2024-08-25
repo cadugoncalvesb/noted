@@ -12,9 +12,8 @@ public class Lista {
 
     }
 
-    public Lista(String admin, String idUser, String nameList, String dateCreate, String dateModification){
+    public Lista(String admin, String nameList, String dateCreate, String dateModification){
         this.admin = admin;
-        this.idUser = idUser;
         this.nameList = nameList;
         this.dateCreate = dateCreate;
         this.dateModification = dateModification;
