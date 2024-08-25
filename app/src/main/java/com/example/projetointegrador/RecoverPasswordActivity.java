@@ -2,6 +2,8 @@ package com.example.projetointegrador;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Toast;
 
@@ -15,7 +17,6 @@ import com.example.projetointegrador.databinding.ActivityRecoverPasswordBinding;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class RecoverPasswordActivity extends AppCompatActivity {
-
     private ActivityRecoverPasswordBinding binding;
     private FirebaseAuth mAuth;
 
@@ -23,15 +24,30 @@ public class RecoverPasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-
         binding = ActivityRecoverPasswordBinding .inflate(getLayoutInflater());
         mAuth = FirebaseAuth.getInstance();
-
         setContentView(binding.getRoot());
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+
+        binding.editTextEmailRecover.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                binding.textInputLayoutEmailRecover.setError(null);
+            }
         });
 
         binding.btnBack.setOnClickListener(v -> {
