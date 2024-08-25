@@ -16,8 +16,12 @@ import com.example.projetointegrador.R;
 import com.example.projetointegrador.db.Lista;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.List;
 
@@ -25,7 +29,10 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
 
     private List<Lista> listaList;
     private OnItemClickListener listener;
-    private FirebaseFirestore db;
+    //private FirebaseFirestore db;
+
+    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+    String idUser = currentUser.getUid();
 
     public ListaAdapter(List<Lista> listaList, OnItemClickListener listener){
         this.listaList = listaList;
@@ -45,7 +52,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
         holder.textViewNameNameList.setText(lista.getNameList());
         String idList = lista.getIdList();
 
-        holder.imageBtnOptions.setOnClickListener(v -> deleteListFirebase(idList));
+        holder.imageBtnOptions.setOnClickListener(v -> deleteRelationUserList(idList));
     }
 
     @Override
@@ -76,37 +83,75 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             });
         }
     }
+
+    private void deleteRelationUserList(String idList) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        if (idList == null || idList.isEmpty()) {
+            System.out.println("ID da lista é nulo");
+            return;
+        }
+
+        db.collection("users-lists")
+                .whereEqualTo("idList", idList)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                        db.collection("users-lists")
+                                .document(doc.getId())
+                                .delete();
+                    }
+
+                    deleteSubcollections(idList);
+                })
+                .addOnFailureListener(e -> System.out.println("Erro ao deletar relação usuário-lista"));
+    }
+
+    private void deleteSubcollections(String idList) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("lists").document(idList)
+                .collection("items").get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                        db.collection("lists").document(idList)
+                                .collection("items")
+                                .document(doc.getId())
+                                .delete();
+                    }
+
+                    // Após deletar todas as subcoleções, deletar o documento principal da lista
+                    deleteListFirebase(idList);
+                })
+                .addOnFailureListener(e -> System.out.println("Erro ao apagar subcoleções"));
+    }
+
     private void deleteListFirebase(String idList) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         if (idList == null || idList.isEmpty()) {
             Log.e("Firebase", "O ID da lista não pode ser nulo ou vazio.");
             return;
         }
-        DocumentReference itemRef = FirebaseFirestore.getInstance()
-                .collection("lists")
-                .document(idList);
-        itemRef.delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        //itemList.removeIf(item -> item.getIdItem().equals(idItem));
-                        int position = -1;
-                        for (int i = 0; i < listaList.size(); i++){
-                            if (listaList.get(i).getIdList().equals(idList)){
-                                position = i;
-                                break;
-                            }
-                        }
-                        if (position != -1){
-                            listaList.remove(position);
-                            notifyItemRemoved(position);
+
+        db.collection("lists")
+                .document(idList)
+                .delete()
+                .addOnSuccessListener(unused -> {
+                    int position = -1;
+                    for (int i = 0; i < listaList.size(); i++) {
+                        if (listaList.get(i).getIdList().equals(idList)) {
+                            position = i;
+                            break;
                         }
                     }
+                    if (position != -1) {
+                        listaList.remove(position);
+                        notifyItemRemoved(position);
+                    }
+                    System.out.println("Lista e subcoleções deletadas com sucesso");
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e("Firebase", "Erro ao deletar lista");
-                    }
-                });
+                .addOnFailureListener(e -> Log.e("Firebase", "Erro ao deletar lista"));
     }
+
 }
