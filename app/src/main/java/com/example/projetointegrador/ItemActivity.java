@@ -97,6 +97,11 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
             startActivity(new Intent(this, MainActivity.class));
         });
 
+        binding.btnOptions.setOnClickListener(v -> {
+            //finish();
+            startActivity(new Intent(this, ListUserActivity.class));
+        });
+
         binding.btnNewItem.setOnClickListener(v -> bottomSheetDialog.show());
 
         bottomSheetDialog.setOnShowListener(dialog -> bottomSheetBinding.editTextNewItem.requestFocus());
