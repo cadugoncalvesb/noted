@@ -3,6 +3,7 @@ package com.example.projetointegrador;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -17,10 +18,12 @@ import com.example.projetointegrador.adapter.ListaAdapter;
 import com.example.projetointegrador.databinding.ActivityMainBinding;
 import com.example.projetointegrador.db.Item;
 import com.example.projetointegrador.db.Lista;
+import com.example.projetointegrador.db.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -57,13 +60,13 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         recyclerViewMyLists.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewMyLists.setAdapter(listaAdapter);
 
-        loadListFirebase();
+        verificationListsUser();
 
         binding.btnProfile.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         binding.btnNewList.setOnClickListener(v -> startActivity(new Intent(this, AddListActivity.class)));
-        }
+    }
 
-    private void loadListFirebase() {
+    private void verificationListsUser() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
             System.out.println("Usuário não autenticado");
@@ -73,31 +76,52 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
 
         db.collection("users-lists")
                 .whereEqualTo("idUser", idUser)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        System.out.println("Erro ao carregar associações de listas: " + task.getException());
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        Toast.makeText(this, "Erro ao buscar usuário", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (value == null || value.isEmpty()) {
+                        Toast.makeText(this, "Nenhum usuário encontrado", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    listaList.clear();
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        String idList = document.getString("idList");
+                    ArrayList<String> arrayIdLists = new ArrayList<>();
+                    for (QueryDocumentSnapshot doc : value) {
+                        String idList = doc.getString("idList");
+                        if (idList != null) {
+                            arrayIdLists.add(idList);
+                        }
+                    }
+                    if (!arrayIdLists.isEmpty()) {
+                        loadDetailsLists(arrayIdLists);
+                    }
+                });
+    }
 
-                        // Buscar os detalhes da lista na coleção "lists"
-                        db.collection("lists").document(idList)
-                                .get()
-                                .addOnSuccessListener(listDocument -> {
-                                    if (listDocument.exists()) {
-                                        Lista lista = listDocument.toObject(Lista.class);
-                                        lista.setIdList(idList);
-                                        listaList.add(lista);
-                                        listaAdapter.notifyDataSetChanged();
-                                    }
-                                })
-                                .addOnFailureListener(e -> {
-                                    Log.w("Firestore", "Erro ao carregar detalhes da lista.", e);
-                                });
+    private void loadDetailsLists(ArrayList<String> arrayIdLists) {
+        listaList.clear();
+
+        db.collection("lists")
+                .whereIn(FieldPath.documentId(), arrayIdLists)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        Toast.makeText(this, "Erro ao buscar detalhes das listas", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (value != null && !value.isEmpty()) {
+                        listaList.clear();
+                        for (QueryDocumentSnapshot doc : value) {
+                            Lista lista = doc.toObject(Lista.class);
+                            if (lista != null) {
+                                lista.setIdList(doc.getId());
+                                listaList.add(lista);
+                            }
+                        }
+                        listaAdapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(this, "Nenhuma lista encontrado", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

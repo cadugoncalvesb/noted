@@ -74,7 +74,7 @@ public class AddListActivity extends AppCompatActivity {
         });
 
         binding.btnAddList.setOnClickListener(v -> {
-            binding.editTextAddNewList.requestFocus();
+
             String newList = binding.editTextAddNewList.getText().toString().trim();
             if (newList.isEmpty()){
                 binding.textInputLayoutNewList.setError("Informe o nome da nova lista");
