@@ -54,6 +54,8 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
         EdgeToEdge.enable(this);
         binding = ActivityItemBinding.inflate(getLayoutInflater());
         bottomSheetBinding = BottomSheetBinding.inflate(LayoutInflater.from(this));
+        FirebaseApp.initializeApp(this);
+        db = FirebaseFirestore.getInstance();
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
         bottomSheetDialog.setContentView(bottomSheetBinding.getRoot());
         setContentView(binding.getRoot());
@@ -62,8 +64,6 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        FirebaseApp.initializeApp(this);
-        db = FirebaseFirestore.getInstance();
         itemList = new ArrayList<>();
         itemAdapter = new ItemAdapter(this, itemList, this);
         recyclerViewItens = binding.recyclerViewItens;

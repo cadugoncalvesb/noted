@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         intent.putExtra("nameList", nameList);
         System.out.println("Estado do ID na main: " + idList);
 
-        finish();
+        //finish();
         startActivity(intent);
     }
 }

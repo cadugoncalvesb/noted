@@ -43,9 +43,9 @@
         android:id="@+id/imageBtnDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/delete"
+        android:src="@drawable/close_outline"
         android:layout_gravity="end"
         android:layout_margin="16dp"
-        android:background="@android:color/transparent"/>
+        android:background="?attr/selectableItemBackgroundBorderless"/>
 
 </com.google.android.material.card.MaterialCardView>

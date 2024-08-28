@@ -30,7 +30,7 @@ public class SplashActivity extends AppCompatActivity {
         new Handler(getMainLooper()).postDelayed(() -> {
             finish();
             checkUser();
-        }, 10);
+        }, 1);
     }
 
     private void checkUser(){
