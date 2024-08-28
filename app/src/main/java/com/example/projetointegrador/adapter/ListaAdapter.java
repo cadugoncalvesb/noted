@@ -49,7 +49,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ListaAdapter.ViewHolder holder, int position) {
         Lista lista = listaList.get(position);
-        holder.textViewNameNameList.setText(lista.getNameList());
+        holder.textViewNameList.setText(lista.getNameList());
         String idList = lista.getIdList();
 
         holder.imageBtnOptions.setOnClickListener(v -> deleteRelationUserList(idList));
@@ -62,22 +62,19 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textViewNameNameList;
+        TextView textViewNameList;
         ImageButton imageBtnOptions;
 
         public ViewHolder(@NonNull View itemView, OnItemClickListener listener) {
             super(itemView);
-            textViewNameNameList = itemView.findViewById(R.id.textViewNameList);
+            textViewNameList = itemView.findViewById(R.id.textViewNameList);
             imageBtnOptions = itemView.findViewById(R.id.imageBtnOptions);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (listener != null){
-                        int position = getAdapterPosition();
-                        if (position != RecyclerView.NO_POSITION){
-                            listener.onItemClick(position);
-                        }
+            itemView.setOnClickListener(v -> {
+                if (listener != null){
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION){
+                        listener.onItemClick(position);
                     }
                 }
             });

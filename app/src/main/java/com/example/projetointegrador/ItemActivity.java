@@ -98,8 +98,10 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
         });
 
         binding.btnOptions.setOnClickListener(v -> {
-            //finish();
-            startActivity(new Intent(this, ListUserActivity.class));
+            String idList = getIntent().getStringExtra("idList");
+            Intent intent = new Intent(this, ListUserActivity.class);
+            intent.putExtra("idList", idList);
+            startActivity(intent);
         });
 
         binding.btnNewItem.setOnClickListener(v -> bottomSheetDialog.show());
