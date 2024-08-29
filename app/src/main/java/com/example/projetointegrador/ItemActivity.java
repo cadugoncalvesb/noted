@@ -1,7 +1,5 @@
 package com.example.projetointegrador;
 
-import static android.app.PendingIntent.getActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -13,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -29,7 +28,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -77,14 +79,10 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
 
         bottomSheetBinding.editTextNewItem.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -108,22 +106,20 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
 
         bottomSheetDialog.setOnShowListener(dialog -> bottomSheetBinding.editTextNewItem.requestFocus());
         //bottomSheetDialog.setOnDismissListener(dialog -> bottomSheetBinding.editTextNewItem.clearFocus());
-        bottomSheetBinding.btnAddNewItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String newItem = bottomSheetBinding.editTextNewItem.getText().toString().trim();
-                if (newItem.isEmpty()) {
-                    bottomSheetBinding.textInputLayoutNewItem.setError("Insira um item");
-                    return;
-                }
-                String idList = getIntent().getStringExtra("idList");
-                Item item = new Item(idList, newItem, false);
-                addItemFirebase(item);
 
-                bottomSheetBinding.textInputLayoutNewItem.setError(null);
-                bottomSheetBinding.editTextNewItem.setText("");
-
+        bottomSheetBinding.btnAddNewItem.setOnClickListener(v -> {
+            String newItem = bottomSheetBinding.editTextNewItem.getText().toString().trim();
+            if (newItem.isEmpty()) {
+                bottomSheetBinding.textInputLayoutNewItem.setError("Insira um item");
+                return;
             }
+            String idList = getIntent().getStringExtra("idList");
+            Item item = new Item(idList, newItem, false);
+            addItemFirebase(item);
+
+            bottomSheetBinding.textInputLayoutNewItem.setError(null);
+            bottomSheetBinding.editTextNewItem.setText("");
+
         });
     }
 
@@ -135,20 +131,17 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
                 .document(idList)
                 .collection("items")
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w("Firestore", "Erro ao carregar itens.", task.getException());
-                        }
-                        itemList.clear();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Item item = document.toObject(Item.class);
-                            item.setIdItem(document.getId());
-                            itemList.add(item);
-                            itemAdapter.notifyDataSetChanged();
-                        }
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w("Firestore", "Erro ao carregar itens.", task.getException());
                     }
+                    itemList.clear();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Item item = document.toObject(Item.class);
+                        item.setIdItem(document.getId());
+                        itemList.add(item);
+                    }
+                    itemAdapter.notifyDataSetChanged();
                 });
     }
 

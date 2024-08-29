@@ -40,7 +40,11 @@ public class AddListActivity extends AppCompatActivity {
         binding = ActivityAddListBinding.inflate(getLayoutInflater());
         db = FirebaseFirestore.getInstance();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null) System.out.println("User não autenticado");
+        if (currentUser == null) {
+            System.out.println("User não autenticado");
+            finish();
+            return;
+        }
         String admin = currentUser.getUid();
         setContentView(binding.getRoot());
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -51,14 +55,10 @@ public class AddListActivity extends AppCompatActivity {
 
         binding.editTextAddNewList.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -67,14 +67,9 @@ public class AddListActivity extends AppCompatActivity {
         });
 
         binding.editTextAddNewList.requestFocus();
-
-        binding.btnBack.setOnClickListener(v -> {
-            finish();
-            startActivity(new Intent(this, MainActivity.class));
-        });
+        binding.btnBack.setOnClickListener(v -> finish());
 
         binding.btnAddList.setOnClickListener(v -> {
-
             String newList = binding.editTextAddNewList.getText().toString().trim();
             if (newList.isEmpty()){
                 binding.textInputLayoutNewList.setError("Informe o nome da nova lista");
@@ -110,6 +105,7 @@ public class AddListActivity extends AppCompatActivity {
                     intent.putExtra("idList", idList);
                     intent.putExtra("nameList", nameList);
                     System.out.println("Estado do ID: " + idList);
+                    finish();
                     startActivity(intent);
                 })
                 .addOnFailureListener(e -> {

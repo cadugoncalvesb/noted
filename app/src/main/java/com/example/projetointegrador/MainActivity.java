@@ -25,6 +25,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.MemoryCacheSettings;
+import com.google.firebase.firestore.PersistentCacheIndexManager;
+import com.google.firebase.firestore.PersistentCacheSettings;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -54,6 +58,26 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             return insets;
         });
         db = FirebaseFirestore.getInstance();
+        FirebaseFirestoreSettings settings =
+                new FirebaseFirestoreSettings.Builder(db.getFirestoreSettings())
+                        // Usar cache somente de memória
+                        .setLocalCacheSettings(MemoryCacheSettings.newBuilder().build())
+                        // Usar cache de disco persistente (padrão)
+                        .setLocalCacheSettings(PersistentCacheSettings.newBuilder()
+                                .build())
+                        .build();
+        db.setFirestoreSettings(settings);
+
+        // return type: @Nullable PersistentCacheIndexManager
+        PersistentCacheIndexManager indexManager = FirebaseFirestore.getInstance().getPersistentCacheIndexManager();
+        if (indexManager != null) {
+            // Indexing is disabled by default
+            indexManager.enableIndexAutoCreation();
+        }
+
+        // If not check indexManager != null, IDE shows warning: Method invocation 'enableIndexAutoCreation' may produce 'NullPointerException'
+        FirebaseFirestore.getInstance().getPersistentCacheIndexManager().enableIndexAutoCreation();
+
         listaList = new ArrayList<>();
         listaAdapter = new ListaAdapter(listaList, this);
         recyclerViewMyLists = binding.recyclerViewMyLists;
