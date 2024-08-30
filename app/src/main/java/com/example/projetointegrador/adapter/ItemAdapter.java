@@ -27,7 +27,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
     private List<Item> itemList;
     private OnItemClickListener listener;
-    private FirebaseFirestore db;
 
     public ItemAdapter(Context context, List<Item> itemList, OnItemClickListener listener) {
         this.itemList = itemList;
@@ -50,21 +49,18 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         String idList = item.getIdList();
 
         // TODO: precisa estar online
-        holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean checked) {
-                if (idList == null || idList.isEmpty()) {
-                    System.out.println("ID da lista é nulo ou vazio");
-                    return;
-                }
-                if (idItem == null || idItem.isEmpty()) {
-                    Log.e("ItemAdapter", "ID do item é nulo ou vazio");
-                    return;
-                }
-
-                item.setChecked(checked);
-                updateCheckedFirebase(idList, idItem, checked);
+        holder.checkBox.setOnCheckedChangeListener((buttonView, checked) -> {
+            if (idList == null || idList.isEmpty()) {
+                Log.e("ItemAdapter","ID da lista é nulo ou vazio");
+                return;
             }
+            if (idItem == null || idItem.isEmpty()) {
+                Log.e("ItemAdapter", "ID do item é nulo ou vazio");
+                return;
+            }
+
+            item.setChecked(checked);
+            updateCheckedFirebase(idList, idItem, checked);
         });
 
         holder.imageBtnDelete.setOnClickListener(v -> deleteItemFirebase(idList, idItem));
@@ -87,20 +83,18 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             checkBox = itemView.findViewById(R.id.checkBox);
             imageBtnDelete = itemView.findViewById(R.id.imageBtnDelete);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (listener != null) {
-                        int position = getAdapterPosition();
-                        if (position != RecyclerView.NO_POSITION) {
-                            listener.onItemClick(position);
-                        }
+            itemView.setOnClickListener(v -> {
+                if (listener != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        listener.onItemClick(position);
                     }
                 }
             });
         }
     }
-    private void updateCheckedFirebase(String idList, String idItem, boolean checked){
+
+    private void updateCheckedFirebase(String idList, String idItem, boolean checked) {
         if (idList == null || idList.isEmpty()) {
             System.out.println("ID da lista é nulo ou vazio no updateChecked");
         }
@@ -114,18 +108,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 .collection("items")
                 .document(idItem);
         itemRef.update("checked", checked)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Log.d("Firebase", "Estado do checkbox atualizado com sucesso.");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("Firebase", "Erro ao atualizar estado do checkbox", e);
-                    }
-                });
+                .addOnSuccessListener(unused -> Log.d("Firebase", "Estado do checkbox atualizado com sucesso."))
+                .addOnFailureListener(e -> Log.w("Firebase", "Erro ao atualizar estado do checkbox", e));
     }
 
     //TODO: precisa estar online
@@ -143,28 +127,19 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 .collection("items")
                 .document(idItem);
         itemRef.delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        //itemList.removeIf(item -> item.getIdItem().equals(idItem));
-                        int position = -1;
-                        for (int i = 0; i < itemList.size(); i++){
-                            if (itemList.get(i).getIdItem().equals(idItem)){
-                                position = i;
-                                break;
-                            }
+                .addOnSuccessListener(unused -> {
+                    int position = -1;
+                    for (int i = 0; i < itemList.size(); i++){
+                        if (itemList.get(i).getIdItem().equals(idItem)){
+                            position = i;
+                            break;
                         }
-                        if (position != -1){
-                            itemList.remove(position);
-                            notifyItemRemoved(position);
-                        }
+                    }
+                    if (position != -1){
+                        itemList.remove(position);
+                        notifyItemRemoved(position);
                     }
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e("Firebase", "Erro ao deletar item");
-                    }
-                });
+                .addOnFailureListener(e -> Log.e("Firebase", "Erro ao deletar item"));
     }
 }

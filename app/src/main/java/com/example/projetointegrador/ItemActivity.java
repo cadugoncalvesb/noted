@@ -90,10 +90,7 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
             }
         });
 
-        binding.btnBack.setOnClickListener(v -> {
-            finish();
-            startActivity(new Intent(this, MainActivity.class));
-        });
+        binding.btnBack.setOnClickListener(v -> finish());
 
         binding.btnOptions.setOnClickListener(v -> {
             String idList = getIntent().getStringExtra("idList");
@@ -119,34 +116,32 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
 
             bottomSheetBinding.textInputLayoutNewItem.setError(null);
             bottomSheetBinding.editTextNewItem.setText("");
-
         });
     }
 
     private void loadItemFirebase() {
-
         String idList = getIntent().getStringExtra("idList");
 
         db.collection("lists")
                 .document(idList)
                 .collection("items")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        Log.w("Firestore", "Erro ao carregar itens.", task.getException());
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        Log.w("Firestore", "Erro ao carregar itens.", error);
                     }
-                    itemList.clear();
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Item item = document.toObject(Item.class);
-                        item.setIdItem(document.getId());
-                        itemList.add(item);
+                    if (value != null && !value.isEmpty()) {
+                        itemList.clear();
+                        for (QueryDocumentSnapshot document : value) {
+                            Item item = document.toObject(Item.class);
+                            item.setIdItem(document.getId());
+                            itemList.add(item);
+                        }
                     }
                     itemAdapter.notifyDataSetChanged();
                 });
     }
 
     public void addItemFirebase(Item item) {
-
         String idList = getIntent().getStringExtra("idList");
 
         Map<String, Object> itemData = new HashMap<>();
@@ -160,23 +155,11 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
                 .add(itemData)
                 .addOnSuccessListener(documentReference -> {
                     item.setIdItem(documentReference.getId());
-                    addItemToRecyclerView(item);
                     Log.d("FirebaseSucess", "ID do item atualizado com sucesso");
                 })
                 .addOnFailureListener(e -> {
                     System.out.println("Erro ao adicionar item");
                 });
-    }
-
-    private void addItemToRecyclerView(Item item) {
-        // Adiciona o novo item à lista
-        itemList.add(item);
-
-        // Notifica o adaptador que um item foi adicionado
-        itemAdapter.notifyItemInserted(itemList.size() - 1);
-
-        // Rolagem para o fim da lista para mostrar o novo item
-        recyclerViewItens.scrollToPosition(itemList.size() - 1);
     }
 
     @Override
