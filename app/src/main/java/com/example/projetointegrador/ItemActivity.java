@@ -99,6 +99,16 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
             startActivity(intent);
         });
 
+        binding.btnShare.setOnClickListener(v -> {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND); // Intent que permite compartilhar com outros app
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "Faça parte da minha lista:\nhttps://yourdomain.com/list?id=12345");
+            sendIntent.setType("text/plain");
+
+            Intent shareIntent = Intent.createChooser(sendIntent, null);
+            startActivity(shareIntent);
+        });
+
         binding.btnNewItem.setOnClickListener(v -> bottomSheetDialog.show());
 
         bottomSheetDialog.setOnShowListener(dialog -> bottomSheetBinding.editTextNewItem.requestFocus());
