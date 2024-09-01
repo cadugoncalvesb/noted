@@ -146,8 +146,8 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
                             item.setIdItem(document.getId());
                             itemList.add(item);
                         }
+                        itemAdapter.notifyDataSetChanged();
                     }
-                    itemAdapter.notifyDataSetChanged();
                 });
     }
 

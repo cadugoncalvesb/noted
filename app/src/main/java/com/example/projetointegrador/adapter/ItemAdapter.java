@@ -44,10 +44,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ItemAdapter.ViewHolder holder, int position) {
         Item item = itemList.get(position);
         holder.textViewNameItem.setText(item.getNameItem());
-        holder.checkBox.setChecked(item.checked());
+        //holder.checkBox.setChecked(item.checked());
         String idItem = item.getIdItem();
         String idList = item.getIdList();
 
+        holder.checkBox.setOnCheckedChangeListener(null); // Remover listener anterior
+        holder.checkBox.setChecked(item.checked());
         // TODO: precisa estar online
         holder.checkBox.setOnCheckedChangeListener((buttonView, checked) -> {
             if (idList == null || idList.isEmpty()) {
@@ -59,8 +61,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 return;
             }
 
-            item.setChecked(checked);
-            updateCheckedFirebase(idList, idItem, checked);
+            // Atualiza o estado apenas se ele realmente mudou
+            if (item.checked() != checked) {
+                item.setChecked(checked);
+                updateCheckedFirebase(idList, idItem, checked);
+                notifyItemChanged(position);
+            }
         });
 
         holder.imageBtnDelete.setOnClickListener(v -> deleteItemFirebase(idList, idItem));
