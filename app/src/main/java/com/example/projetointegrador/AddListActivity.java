@@ -20,6 +20,7 @@ import com.example.projetointegrador.db.Item;
 import com.example.projetointegrador.db.Lista;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -87,7 +88,7 @@ public class AddListActivity extends AppCompatActivity {
         Map<String, Object> listData = new HashMap<>();
         listData.put("admin", lista.getAdmin());
         listData.put("nameList", lista.getNameList());
-        listData.put("dateCreate", lista.getDateCreate());
+        listData.put("dateCreate", FieldValue.serverTimestamp());
         listData.put("dataModification", lista.getDateModification());
 
         db.collection("lists")

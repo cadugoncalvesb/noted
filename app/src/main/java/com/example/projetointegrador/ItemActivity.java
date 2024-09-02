@@ -28,6 +28,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -35,9 +36,13 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ItemActivity extends AppCompatActivity implements OnItemClickListener {
@@ -73,6 +78,7 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
         recyclerViewItens.setAdapter(itemAdapter);
 
         loadItemFirebase();
+        loadDateCreateList();
 
         String nameList = getIntent().getStringExtra("nameList");
         binding.textViewNameList.setText(nameList);
@@ -144,10 +150,35 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
                         for (QueryDocumentSnapshot document : value) {
                             Item item = document.toObject(Item.class);
                             item.setIdItem(document.getId());
-                            itemList.add(item);
+                            itemList.add(0, item);
                         }
                         itemAdapter.notifyDataSetChanged();
                     }
+                });
+    }
+
+    private void loadDateCreateList() {
+        String idList = getIntent().getStringExtra("idList");
+
+        db.collection("lists")
+                .document(idList)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Timestamp timestamp = documentSnapshot.getTimestamp("dateCreate");
+                        if (timestamp != null) {
+                            Date date = timestamp.toDate();
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+                            String formattedDate = sdf.format(date);
+
+                            binding.textViewDateCreateList.setText("Criada em: " + formattedDate);
+                        } else {
+                            binding.textViewDateCreateList.setText("Data de criação indisponível");
+                        }
+                    }
+                })
+                .addOnFailureListener(error -> {
+                    binding.textViewDateCreateList.setText("Erro ao carregar data de criação");
                 });
     }
 

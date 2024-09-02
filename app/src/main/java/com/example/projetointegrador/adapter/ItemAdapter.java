@@ -65,7 +65,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             if (item.checked() != checked) {
                 item.setChecked(checked);
                 updateCheckedFirebase(idList, idItem, checked);
-                notifyItemChanged(position);
+                notifyItemChanged(position); // Atualizar a posição específica no RecyclerView
             }
         });
 

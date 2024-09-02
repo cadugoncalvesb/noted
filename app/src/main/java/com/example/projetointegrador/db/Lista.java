@@ -1,18 +1,20 @@
 package com.example.projetointegrador.db;
 
+import com.google.firebase.Timestamp;
+
 public class Lista {
     public String idList;
     public String admin;
     public String idUser;
     public String nameList;
-    public String dateCreate;
+    public Timestamp dateCreate;
     public String dateModification;
 
     public Lista(){
 
     }
 
-    public Lista(String admin, String nameList, String dateCreate, String dateModification){
+    public Lista(String admin, String nameList, Timestamp dateCreate, String dateModification){
         this.admin = admin;
         this.nameList = nameList;
         this.dateCreate = dateCreate;
@@ -51,11 +53,11 @@ public class Lista {
         this.nameList = nameList;
     }
 
-    public String getDateCreate() {
+    public Timestamp getDateCreate() {
         return dateCreate;
     }
 
-    public void setDateCreate(String dateCreate) {
+    public void setDateCreate(Timestamp dateCreate) {
         this.dateCreate = dateCreate;
     }
 
