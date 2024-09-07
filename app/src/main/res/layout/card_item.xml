@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:text="Item"
                 android:textColor="@color/md_theme_onSurface"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textStyle="bold"/>
         </LinearLayout>
 

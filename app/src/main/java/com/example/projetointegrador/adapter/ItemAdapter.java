@@ -88,14 +88,17 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             checkBox = itemView.findViewById(com.example.projetointegrador.R.id.checkBox);
             imageBtnDelete = itemView.findViewById(com.example.projetointegrador.R.id.imageBtnDelete);
 
+            imageBtnDelete.setVisibility(View.GONE);
             itemView.setOnClickListener(v -> {
                 if (listener != null) {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
                         listener.onItemClick(position);
+                        imageBtnDelete.setVisibility(View.VISIBLE);
                     }
                 }
             });
+            imageBtnDelete.setVisibility(View.GONE);
         }
     }
 
