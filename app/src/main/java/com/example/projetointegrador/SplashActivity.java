@@ -40,4 +40,5 @@ public class SplashActivity extends AppCompatActivity {
             startActivity(new Intent(this, LoginActivity.class));
         }
     }
+    // testando conexão
 }
