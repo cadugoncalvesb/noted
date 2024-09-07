@@ -1,23 +1,22 @@
 package com.example.projetointegrador.adapter;
 
+import static android.os.Build.VERSION_CODES.R;
+
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.projetointegrador.R;
 import com.example.projetointegrador.db.Item;
 import com.example.projetointegrador.OnItemClickListener;
-import com.example.projetointegrador.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -36,7 +35,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(com.example.projetointegrador.R.layout.card_item, parent, false);
         return new ViewHolder(view, listener);
     }
 
@@ -85,9 +84,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
         public ViewHolder(View itemView, final OnItemClickListener listener) {
             super(itemView);
-            textViewNameItem = itemView.findViewById(R.id.textViewNameItem);
-            checkBox = itemView.findViewById(R.id.checkBox);
-            imageBtnDelete = itemView.findViewById(R.id.imageBtnDelete);
+            textViewNameItem = itemView.findViewById(com.example.projetointegrador.R.id.textViewNameItem);
+            checkBox = itemView.findViewById(com.example.projetointegrador.R.id.checkBox);
+            imageBtnDelete = itemView.findViewById(com.example.projetointegrador.R.id.imageBtnDelete);
 
             itemView.setOnClickListener(v -> {
                 if (listener != null) {

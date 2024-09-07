@@ -1,8 +1,6 @@
 package com.example.projetointegrador;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Adapter;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
