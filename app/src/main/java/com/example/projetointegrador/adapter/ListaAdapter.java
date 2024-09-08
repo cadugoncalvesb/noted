@@ -1,5 +1,10 @@
 package com.example.projetointegrador.adapter;
 
+import static android.content.Intent.getIntent;
+
+import static androidx.core.content.ContextCompat.startActivity;
+
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +15,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.projetointegrador.ListUserActivity;
 import com.example.projetointegrador.OnItemClickListener;
+import com.example.projetointegrador.ProfileActivity;
 import com.example.projetointegrador.R;
 import com.example.projetointegrador.db.Lista;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -24,14 +32,15 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
 
     private List<Lista> listaList;
     private OnItemClickListener listener;
-    //private FirebaseFirestore db;
+    private String admin;
 
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     String idUser = currentUser.getUid();
 
-    public ListaAdapter(List<Lista> listaList, OnItemClickListener listener){
+    public ListaAdapter(List<Lista> listaList, String admin, OnItemClickListener listener){
         this.listaList = listaList;
         this.listener = listener;
+        this.admin = admin;
     }
 
     @NonNull
@@ -46,8 +55,44 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
         Lista lista = listaList.get(position);
         holder.textViewNameList.setText(lista.getNameList());
         String idList = lista.getIdList();
+        String admin = lista.getAdmin();
 
-        holder.imageBtnOptions.setOnClickListener(v -> deleteRelationUserList(idList));
+        holder.imageBtnOptions.setOnClickListener(v -> {
+            View bottomSheetView = LayoutInflater.from(holder.itemView.getContext())
+                    .inflate(R.layout.bottom_sheet_list, null);
+
+            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(holder.itemView.getContext());
+            bottomSheetDialog.setContentView(bottomSheetView);
+
+            bottomSheetView.findViewById(R.id.btnInfo).setOnClickListener(view -> {
+                Intent intent = new Intent(holder.itemView.getContext(), ListUserActivity.class);
+                intent.putExtra("idList", idList);
+                intent.putExtra("admin", admin);
+                holder.itemView.getContext().startActivity(intent);
+            });
+
+            bottomSheetView.findViewById(R.id.btnShare).setOnClickListener(view -> {
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND); // Intent que permite compartilhar com outros app
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "Faça parte da minha lista:\nhttps://yourdomain.com/list?id=12345");
+                sendIntent.setType("text/plain");
+
+                Intent shareIntent = Intent.createChooser(sendIntent, null);
+                bottomSheetDialog.dismiss();
+                holder.itemView.getContext().startActivity(shareIntent);
+            });
+
+            bottomSheetView.findViewById(R.id.btnlogOut).setOnClickListener(view -> {
+                logOutList(idList, idUser);
+                bottomSheetDialog.dismiss();
+            });
+
+            bottomSheetView.findViewById(R.id.btnDelete).setOnClickListener(view -> {
+                deleteRelationUserList(idList);
+                bottomSheetDialog.dismiss();
+            });
+            bottomSheetDialog.show();
+        });
     }
 
     @Override
@@ -76,7 +121,27 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
         }
     }
 
-    private void deleteRelationUserList(String idList) {
+    public void logOutList(String idList, String idUser) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("users-lists")
+                .whereEqualTo("idList", idList)
+                .whereEqualTo("idUser", idUser)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                            doc.getReference().delete();
+                            System.out.println("Saiu");
+                        }
+                    } else System.out.println("Nada encontrado");
+                })
+                .addOnFailureListener(error -> {
+                    System.out.println("Erro ao buscar documentos: " + error);
+                });
+    }
+
+    public void deleteRelationUserList(String idList) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         if (idList == null || idList.isEmpty()) {
@@ -99,7 +164,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
                 .addOnFailureListener(e -> System.out.println("Erro ao deletar relação usuário-lista"));
     }
 
-    private void deleteSubcollections(String idList) {
+    public void deleteSubcollections(String idList) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("lists").document(idList)
@@ -118,7 +183,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
                 .addOnFailureListener(e -> System.out.println("Erro ao apagar subcoleções"));
     }
 
-    private void deleteListFirebase(String idList) {
+    public void deleteListFirebase(String idList) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         if (idList == null || idList.isEmpty()) {

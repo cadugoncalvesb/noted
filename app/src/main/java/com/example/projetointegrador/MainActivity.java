@@ -71,8 +71,9 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         // If not check indexManager != null, IDE shows warning: Method invocation 'enableIndexAutoCreation' may produce 'NullPointerException'
         FirebaseFirestore.getInstance().getPersistentCacheIndexManager().enableIndexAutoCreation();
 
+        String admin = getIntent().getStringExtra("admin");
         listaList = new ArrayList<>();
-        listaAdapter = new ListaAdapter(listaList, this);
+        listaAdapter = new ListaAdapter(listaList, admin,this);
         recyclerViewMyLists = binding.recyclerViewMyLists;
         recyclerViewMyLists.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewMyLists.setAdapter(listaAdapter);
