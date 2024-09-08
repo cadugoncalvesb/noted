@@ -41,7 +41,6 @@ public class ListUserActivity extends AppCompatActivity implements OnItemClickLi
     private ArrayList<User> listaUsers;
     private UserAdapter userAdapter;
     private RecyclerView recyclerViewUsers;
-    Boolean isAdmin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +61,14 @@ public class ListUserActivity extends AppCompatActivity implements OnItemClickLi
         recyclerViewUsers.setAdapter(userAdapter);
 
         verificationUsersList();
+
+        binding.btnNewUser.setVisibility(View.GONE);
+        String admin = getIntent().getStringExtra("admin");
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        String idUser = currentUser.getUid();
+        if (idUser.equals(admin)){
+            binding.btnNewUser.setVisibility(View.VISIBLE);
+        }
 
         binding.btnBack.setOnClickListener(v -> finish());
         binding.btnNewUser.setOnClickListener(v -> bottomSheetUser());
