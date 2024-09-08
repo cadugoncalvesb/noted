@@ -18,10 +18,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     private List<User> listaUsers;
     private OnItemClickListener listener;
+    private String admin;
 
-    public UserAdapter(List<User> listaUsers, OnItemClickListener listener) {
+    public UserAdapter(List<User> listaUsers, String admin, OnItemClickListener listener) {
         this.listaUsers = listaUsers;
         this.listener = listener;
+        this.admin = admin;
     }
 
     @NonNull
@@ -35,7 +37,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull UserAdapter.ViewHolder holder, int position) {
         User user = listaUsers.get(position);
         holder.textViewNameUser.setText(user.getName());
-        //holder.textViewAdmin
+
+        if (user.getIdUser().equals(admin)) {
+            holder.textViewAdmin.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

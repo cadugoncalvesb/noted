@@ -88,8 +88,10 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
 
         binding.btnOptions.setOnClickListener(v -> {
             String idList = getIntent().getStringExtra("idList");
+            String admin = getIntent().getStringExtra("admin");
             Intent intent = new Intent(this, ListUserActivity.class);
             intent.putExtra("idList", idList);
+            intent.putExtra("admin", admin);
             startActivity(intent);
         });
 

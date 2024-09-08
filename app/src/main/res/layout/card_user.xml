@@ -40,7 +40,8 @@
                 android:layout_marginStart="10dp"
                 android:text="Admin"
                 android:textSize="14dp"
-                android:textColor="@color/md_theme_primary" />
+                android:textColor="@color/md_theme_primary"
+                android:visibility="gone"/>
         </LinearLayout>
 
 

@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                         return;
                     }
                     if (value == null || value.isEmpty()) {
-                        Toast.makeText(this, "Nenhum usuário encontrado", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(this, "Nenhum usuário encontrado", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                         }
                         listaAdapter.notifyDataSetChanged();
                     } else {
-                        Toast.makeText(this, "Nenhuma lista encontrado", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(this, "Nenhuma lista encontrado", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -148,10 +148,12 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         Lista lista = listaList.get(position);
         String idList = lista.getIdList();
         String nameList = lista.getNameList();
+        String admin = lista.getAdmin();
 
         Intent intent = new Intent(this, ItemActivity.class);
         intent.putExtra("idList", idList);
         intent.putExtra("nameList", nameList);
+        intent.putExtra("admin", admin);
         System.out.println("Estado do ID na main: " + idList);
 
         //finish();

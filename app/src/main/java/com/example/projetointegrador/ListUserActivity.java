@@ -24,6 +24,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -39,6 +41,7 @@ public class ListUserActivity extends AppCompatActivity implements OnItemClickLi
     private ArrayList<User> listaUsers;
     private UserAdapter userAdapter;
     private RecyclerView recyclerViewUsers;
+    Boolean isAdmin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +56,7 @@ public class ListUserActivity extends AppCompatActivity implements OnItemClickLi
             return insets;
         });
         listaUsers = new ArrayList<>();
-        userAdapter = new UserAdapter(listaUsers, this);
+        userAdapter = new UserAdapter(listaUsers,"",this);
         recyclerViewUsers = binding.recyclerViewUsers;
         recyclerViewUsers.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewUsers.setAdapter(userAdapter);
@@ -95,6 +98,7 @@ public class ListUserActivity extends AppCompatActivity implements OnItemClickLi
 
     private void loadDetailsUsers(ArrayList<String> arrayIdUsers) {
         listaUsers.clear();
+        String admin = getIntent().getStringExtra("admin");
 
         db.collection("users")
                 .whereIn(FieldPath.documentId(), arrayIdUsers)
@@ -113,6 +117,8 @@ public class ListUserActivity extends AppCompatActivity implements OnItemClickLi
                                 listaUsers.add(user);
                             }
                         }
+                        userAdapter = new UserAdapter(listaUsers, admin, position -> {});
+                        recyclerViewUsers.setAdapter(userAdapter);
                         userAdapter.notifyDataSetChanged();
                     } else {
                         Toast.makeText(this, "Nenhum usuário encontrado", Toast.LENGTH_SHORT).show();
