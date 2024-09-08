@@ -38,7 +38,7 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
         String idUser = currentUser.getUid();
-        getNameUser(idUser);
+        getNameAndEmailUser(idUser);
 
         binding.btnBack.setOnClickListener(v -> {
             finish();
@@ -52,15 +52,18 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
     }
-    private void getNameUser(String idUser) {
+    private void getNameAndEmailUser(String idUser) {
         db.collection("users")
                 .document(idUser)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         String name = documentSnapshot.getString("name");
+                        String email = documentSnapshot.getString("email");
                         if (name != null) binding.textViewName.setText(name);
                         else binding.textViewName.setText("Nome indisponível no momento");
+                        if (email != null) binding.textViewEmail.setText(email);
+                        else binding.textViewEmail.setText("E-mail indisponível no momento");
                     }
                 })
                 .addOnFailureListener(e -> {
