@@ -21,6 +21,8 @@ import com.example.projetointegrador.ProfileActivity;
 import com.example.projetointegrador.R;
 import com.example.projetointegrador.db.Lista;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.divider.MaterialDivider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -63,6 +65,25 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
 
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(holder.itemView.getContext());
             bottomSheetDialog.setContentView(bottomSheetView);
+
+            MaterialButton btnShare = bottomSheetView.findViewById(R.id.btnShare);
+            MaterialButton btnDelete = bottomSheetView.findViewById(R.id.btnDelete);
+            MaterialDivider div2 = bottomSheetView.findViewById(R.id.div2);
+            MaterialDivider div1 = bottomSheetView.findViewById(R.id.div1);
+
+            // Ocultar por padrão
+            btnDelete.setVisibility(View.GONE);
+            btnShare.setVisibility(View.GONE);
+            div2.setVisibility(View.GONE);
+            div1.setVisibility(View.GONE);
+
+            // Verifica se o usuário atual é o admin
+            if (idUser.equals(admin)) {
+                btnDelete.setVisibility(View.VISIBLE);
+                btnShare.setVisibility(View.VISIBLE);
+                div2.setVisibility(View.VISIBLE);
+                div1.setVisibility(View.VISIBLE);
+            }
 
             bottomSheetView.findViewById(R.id.btnInfo).setOnClickListener(view -> {
                 Intent intent = new Intent(holder.itemView.getContext(), ListUserActivity.class);

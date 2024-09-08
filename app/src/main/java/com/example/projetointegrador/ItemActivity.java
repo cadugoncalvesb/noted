@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,12 +17,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projetointegrador.adapter.ItemAdapter;
+import com.example.projetointegrador.adapter.ListaAdapter;
 import com.example.projetointegrador.databinding.ActivityItemBinding;
 import com.example.projetointegrador.databinding.BottomSheetBinding;
 import com.example.projetointegrador.db.Item;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.divider.MaterialDivider;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -85,30 +92,10 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
         });
 
         binding.btnBack.setOnClickListener(v -> finish());
-
-        binding.btnOptions.setOnClickListener(v -> {
-            String idList = getIntent().getStringExtra("idList");
-            String admin = getIntent().getStringExtra("admin");
-            Intent intent = new Intent(this, ListUserActivity.class);
-            intent.putExtra("idList", idList);
-            intent.putExtra("admin", admin);
-            startActivity(intent);
-        });
-
-        binding.btnShare.setOnClickListener(v -> {
-            Intent sendIntent = new Intent();
-            sendIntent.setAction(Intent.ACTION_SEND); // Intent que permite compartilhar com outros app
-            sendIntent.putExtra(Intent.EXTRA_TEXT, "Faça parte da minha lista:\nhttps://yourdomain.com/list?id=12345");
-            sendIntent.setType("text/plain");
-
-            Intent shareIntent = Intent.createChooser(sendIntent, null);
-            startActivity(shareIntent);
-        });
-
+        binding.btnOptions.setOnClickListener(v -> bottomSheetOptions());
         binding.btnNewItem.setOnClickListener(v -> bottomSheetDialog.show());
 
         bottomSheetDialog.setOnShowListener(dialog -> bottomSheetBinding.editTextNewItem.requestFocus());
-        //bottomSheetDialog.setOnDismissListener(dialog -> bottomSheetBinding.editTextNewItem.clearFocus());
 
         bottomSheetBinding.btnAddNewItem.setOnClickListener(v -> {
             String newItem = bottomSheetBinding.editTextNewItem.getText().toString().trim();
@@ -122,6 +109,59 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
 
             bottomSheetBinding.textInputLayoutNewItem.setError(null);
             bottomSheetBinding.editTextNewItem.setText("");
+        });
+    }
+
+    private void bottomSheetOptions() {
+        View view = LayoutInflater.from(this).inflate(R.layout.bottom_sheet_list, null);
+
+        BottomSheetDialog bottomSheetDialog1 = new BottomSheetDialog(this);
+        bottomSheetDialog1.setContentView(view);
+        bottomSheetDialog1.show();
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        String idUser = currentUser.getUid();
+        String idList = getIntent().getStringExtra("idList");
+        String admin = getIntent().getStringExtra("admin");
+
+        MaterialButton btnInfo = view.findViewById(R.id.btnInfo);
+        MaterialButton btnShare = view.findViewById(R.id.btnShare);
+        MaterialButton btnLogOut = view.findViewById(R.id.btnlogOut);
+        MaterialButton btnDelete = view.findViewById(R.id.btnDelete);
+        MaterialDivider div2 = view.findViewById(R.id.div2);
+        MaterialDivider div1 = view.findViewById(R.id.div1);
+
+        btnDelete.setVisibility(View.GONE);
+        div2.setVisibility(View.GONE);
+        div1.setVisibility(View.GONE);
+        btnShare.setVisibility(View.GONE);
+        if (idUser.equals(admin)) {
+            div1.setVisibility(View.VISIBLE);
+            btnShare.setVisibility(View.VISIBLE);
+        }
+
+        btnInfo.setOnClickListener(view2 -> {
+            Intent intent = new Intent(this, ListUserActivity.class);
+            intent.putExtra("idList", idList);
+            intent.putExtra("admin", admin);
+            startActivity(intent);
+        });
+
+        btnShare.setOnClickListener(view2 -> {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND); // Intent que permite compartilhar com outros app
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "Faça parte da minha lista:\nhttps://yourdomain.com/list?id=12345");
+            sendIntent.setType("text/plain");
+
+            Intent shareIntent = Intent.createChooser(sendIntent, null);
+            bottomSheetDialog1.dismiss();
+            startActivity(shareIntent);
+        });
+
+        btnLogOut.setOnClickListener(view2 -> {
+            logOutList(idList, idUser);
+            bottomSheetDialog1.dismiss();
+            finish();
         });
     }
 
@@ -190,6 +230,26 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
                 })
                 .addOnFailureListener(e -> {
                     System.out.println("Erro ao adicionar item");
+                });
+    }
+
+    public void logOutList(String idList, String idUser) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("users-lists")
+                .whereEqualTo("idList", idList)
+                .whereEqualTo("idUser", idUser)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                            doc.getReference().delete();
+                            System.out.println("Saiu");
+                        }
+                    } else System.out.println("Nada encontrado");
+                })
+                .addOnFailureListener(error -> {
+                    System.out.println("Erro ao buscar documentos: " + error);
                 });
     }
 

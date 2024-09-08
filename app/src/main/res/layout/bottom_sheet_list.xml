@@ -24,6 +24,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         app:icon="@drawable/information_circle_outline"
+        app:iconTint="@color/md_theme_onSurface"
         app:iconPadding="20dp"
         app:iconSize="30dp" />
 
@@ -49,6 +50,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         app:icon="@drawable/share_social_outline"
+        app:iconTint="@color/md_theme_onSurface"
         app:iconPadding="20dp"
         app:iconSize="30dp" />
 
@@ -76,7 +78,7 @@
         app:icon="@drawable/log_out_outline"
         app:iconPadding="20dp"
         app:iconSize="30dp"
-        app:iconTint="@color/md_theme_errorContainer_mediumContrast" />
+        app:iconTint="@color/md_theme_onSurface" />
 
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/div2"
