@@ -70,7 +70,7 @@
         android:backgroundTint="@android:color/transparent"
         android:paddingHorizontal="10dp"
         android:paddingVertical="10dp"
-        android:text="Sair"
+        android:text="Sair da lista"
         android:textAlignment="textStart"
         android:textColor="@color/md_theme_onSurface"
         android:textSize="18sp"
