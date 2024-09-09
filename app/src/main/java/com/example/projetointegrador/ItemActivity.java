@@ -23,6 +23,7 @@ import com.example.projetointegrador.databinding.BottomSheetBinding;
 import com.example.projetointegrador.db.Item;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.divider.MaterialDivider;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.Timestamp;
@@ -159,9 +160,17 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
         });
 
         btnLogOut.setOnClickListener(view2 -> {
-            logOutList(idList, idUser);
-            bottomSheetDialog1.dismiss();
-            finish();
+            new MaterialAlertDialogBuilder(view.getContext())
+                    .setTitle("Confirmar saída")
+                    .setMessage("Tem certeza que deseja sair da lista?")
+                    .setPositiveButton("Sim", (dialog, which) -> {
+                        logOutList(idList, idUser);
+                        bottomSheetDialog1.dismiss();
+                    })
+                    .setNegativeButton("Não", (dialog, which) -> {
+                        bottomSheetDialog1.dismiss();
+                    })
+                    .show();
         });
     }
 

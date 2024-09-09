@@ -22,6 +22,7 @@ import com.example.projetointegrador.R;
 import com.example.projetointegrador.db.Lista;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.divider.MaterialDivider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -104,13 +105,31 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             });
 
             bottomSheetView.findViewById(R.id.btnlogOut).setOnClickListener(view -> {
-                logOutList(idList, idUser);
-                bottomSheetDialog.dismiss();
+                new MaterialAlertDialogBuilder(view.getContext())
+                        .setTitle("Confirmar saída")
+                        .setMessage("Tem certeza que deseja sair da lista?")
+                        .setPositiveButton("Sim", (dialog, which) -> {
+                            logOutList(idList, idUser);
+                            bottomSheetDialog.dismiss();
+                        })
+                        .setNegativeButton("Não", (dialog, which) -> {
+                            bottomSheetDialog.dismiss();
+                        })
+                        .show();
             });
 
             bottomSheetView.findViewById(R.id.btnDelete).setOnClickListener(view -> {
-                deleteRelationUserList(idList);
-                bottomSheetDialog.dismiss();
+                new MaterialAlertDialogBuilder(view.getContext())
+                        .setTitle("Confirmar exclusão")
+                        .setMessage("Tem certeza que deseja excluir à lista?")
+                        .setPositiveButton("Sim", (dialog, which) -> {
+                            deleteRelationUserList(idList);
+                            bottomSheetDialog.dismiss();
+                        })
+                        .setNegativeButton("Não", (dialog, which) -> {
+                            bottomSheetDialog.dismiss();
+                        })
+                        .show();
             });
             bottomSheetDialog.show();
         });
