@@ -90,6 +90,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
                 Intent intent = new Intent(holder.itemView.getContext(), ListUserActivity.class);
                 intent.putExtra("idList", idList);
                 intent.putExtra("admin", admin);
+                bottomSheetDialog.dismiss();
                 holder.itemView.getContext().startActivity(intent);
             });
 
@@ -105,29 +106,29 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
             });
 
             bottomSheetView.findViewById(R.id.btnlogOut).setOnClickListener(view -> {
+                bottomSheetDialog.dismiss();
                 new MaterialAlertDialogBuilder(view.getContext())
                         .setTitle("Confirmar saída")
                         .setMessage("Tem certeza que deseja sair da lista?")
                         .setPositiveButton("Sim", (dialog, which) -> {
                             logOutList(idList, idUser);
-                            bottomSheetDialog.dismiss();
                         })
                         .setNegativeButton("Não", (dialog, which) -> {
-                            bottomSheetDialog.dismiss();
+
                         })
                         .show();
             });
 
             bottomSheetView.findViewById(R.id.btnDelete).setOnClickListener(view -> {
+                bottomSheetDialog.dismiss();
                 new MaterialAlertDialogBuilder(view.getContext())
                         .setTitle("Confirmar exclusão")
                         .setMessage("Tem certeza que deseja excluir à lista?")
                         .setPositiveButton("Sim", (dialog, which) -> {
                             deleteRelationUserList(idList);
-                            bottomSheetDialog.dismiss();
                         })
                         .setNegativeButton("Não", (dialog, which) -> {
-                            bottomSheetDialog.dismiss();
+
                         })
                         .show();
             });

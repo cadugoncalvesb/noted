@@ -145,6 +145,7 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
             Intent intent = new Intent(this, ListUserActivity.class);
             intent.putExtra("idList", idList);
             intent.putExtra("admin", admin);
+            bottomSheetDialog1.dismiss();
             startActivity(intent);
         });
 
@@ -160,15 +161,15 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
         });
 
         btnLogOut.setOnClickListener(view2 -> {
+            bottomSheetDialog1.dismiss();
             new MaterialAlertDialogBuilder(view.getContext())
                     .setTitle("Confirmar saída")
                     .setMessage("Tem certeza que deseja sair da lista?")
                     .setPositiveButton("Sim", (dialog, which) -> {
                         logOutList(idList, idUser);
-                        bottomSheetDialog1.dismiss();
                     })
                     .setNegativeButton("Não", (dialog, which) -> {
-                        bottomSheetDialog1.dismiss();
+
                     })
                     .show();
         });
