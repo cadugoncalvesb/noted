@@ -79,12 +79,40 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
         String nameList = getIntent().getStringExtra("nameList");
         binding.textViewNameList.setText(nameList);
 
+        bottomSheetBinding.editTextUnidade.setEnabled(false);
+        bottomSheetBinding.editTextQtd.setEnabled(false);
+        bottomSheetBinding.editTextPreco.setEnabled(false);
+        bottomSheetBinding.editTextUnidade.setAlpha(0.5f);
+        bottomSheetBinding.editTextUnidade.setFocusable(false);
+        bottomSheetBinding.editTextUnidade.setFocusableInTouchMode(false);
+        bottomSheetBinding.editTextQtd.setAlpha(0.5f);
+        bottomSheetBinding.editTextPreco.setAlpha(0.5f);
         bottomSheetBinding.editTextNewItem.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!s.toString().isEmpty()) {
+                    bottomSheetBinding.editTextUnidade.setEnabled(true);
+                    bottomSheetBinding.editTextUnidade.setFocusable(true);
+                    bottomSheetBinding.editTextUnidade.setFocusableInTouchMode(true);
+                    bottomSheetBinding.editTextQtd.setEnabled(true);
+                    bottomSheetBinding.editTextPreco.setEnabled(true);
+                    bottomSheetBinding.editTextUnidade.setAlpha(1.0f);
+                    bottomSheetBinding.editTextQtd.setAlpha(1.0f);
+                    bottomSheetBinding.editTextPreco.setAlpha(1.0f);
+                } else {
+                    bottomSheetBinding.editTextUnidade.setEnabled(false);
+                    bottomSheetBinding.editTextUnidade.setFocusable(false);
+                    bottomSheetBinding.editTextUnidade.setFocusableInTouchMode(false);
+                    bottomSheetBinding.editTextQtd.setEnabled(false);
+                    bottomSheetBinding.editTextPreco.setEnabled(false);
+                    bottomSheetBinding.editTextUnidade.setAlpha(0.5f);
+                    bottomSheetBinding.editTextQtd.setAlpha(0.5f);
+                    bottomSheetBinding.editTextPreco.setAlpha(0.5f);
+                }
+            }
 
             @Override
             public void afterTextChanged(Editable s) {

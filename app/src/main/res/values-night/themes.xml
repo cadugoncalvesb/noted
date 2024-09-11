@@ -48,5 +48,6 @@
         <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
         <item name="fontFamily">@font/poppins</item>
         <item name="android:windowBackground">#121212</item>
+        <item name="color">#121212</item>
     </style>
 </resources>
