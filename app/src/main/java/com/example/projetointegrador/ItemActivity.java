@@ -7,8 +7,11 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -80,7 +83,6 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
         binding.btnBack.setOnClickListener(v -> finish());
         binding.btnOptions.setOnClickListener(v -> bottomSheetOptions());
         binding.btnNewItem.setOnClickListener(v -> createItem());
-
     }
 
     private void bottomSheetOptions() {
@@ -192,7 +194,6 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
                 });
     }
 
-    //TODO: está adicionando qtd e preco com zero
     private void createItem() {
         View view = LayoutInflater.from(this).inflate(R.layout.bottom_sheet, null);
 
@@ -200,14 +201,31 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
         bottomSheetDialog.setContentView(view);
         bottomSheetDialog.show();
 
+        TextInputLayout textInputLayoutUnidade = view.findViewById(R.id.textInputLayoutUnidade);
         TextInputLayout textInputLayoutNewItem = view.findViewById(R.id.textInputLayoutNewItem);
         EditText editTextNewItem = view.findViewById(R.id.editTextNewItem);
-        EditText editTextUnidade = view.findViewById(R.id.editTextUnidade);
+        AutoCompleteTextView editTextUnidade = view.findViewById(R.id.editTextUnidade);
         EditText editTextQtd = view.findViewById(R.id.editTextQtd);
         EditText editTextPreco = view.findViewById(R.id.editTextPreco);
         MaterialButton btnAddNewItem = view.findViewById(R.id.btnAddNewItem);
+        ImageButton imageBtnValues = view.findViewById(R.id.imageBtnValues);
 
-        bottomSheetDialog.setOnShowListener(dialog -> editTextNewItem.requestFocus());
+        String[] suggestions = {"l", "ml", "kg", "g"};
+        ArrayAdapter<String> adapterSuggestions = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, suggestions);
+        editTextUnidade.setAdapter(adapterSuggestions);
+
+        textInputLayoutUnidade.setVisibility(View.GONE);
+        editTextUnidade.setVisibility(View.GONE);
+        editTextQtd.setVisibility(View.GONE);
+        editTextPreco.setVisibility(View.GONE);
+
+        imageBtnValues.setOnClickListener(vv -> {
+            textInputLayoutUnidade.setVisibility(View.VISIBLE);
+            editTextUnidade.setVisibility(View.VISIBLE);
+            editTextQtd.setVisibility(View.VISIBLE);
+            editTextPreco.setVisibility(View.VISIBLE);
+        });
+        editTextNewItem.requestFocus();
 
         btnAddNewItem.setOnClickListener(v -> {
             String newItem = editTextNewItem.getText().toString().trim();
@@ -216,14 +234,25 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
                 return;
             }
 
+            String unidade = editTextUnidade.getText().toString().trim();
+            String quantidadeStr = editTextQtd.getText().toString().trim();
+            String precoStr = editTextPreco.getText().toString().trim();
+
             int quantidade = 0;
             float preco = 0.0f;
-            String unidade = editTextUnidade.getText().toString().trim();
+
+            if (!quantidadeStr.isEmpty()){
+                quantidade = Integer.parseInt(quantidadeStr);
+            }
+            if (!precoStr.isEmpty()) {
+                preco = Float.parseFloat(precoStr);
+            }
 
             String idList = getIntent().getStringExtra("idList");
             Item item = new Item(idList, newItem, false, unidade, quantidade, preco);
             addItemFirebase(item);
 
+            editTextNewItem.requestFocus();
             textInputLayoutNewItem.setError(null);
             editTextNewItem.setText("");
             editTextUnidade.setText("");

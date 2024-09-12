@@ -18,6 +18,9 @@ public class Item {
         this.idList = idList;
         this.nameItem = nameItem;
         this.checked = checked;
+        this.unidade = unidade;
+        this.quantidade = quantidade;
+        this.preco = preco;
     }
 
     public String getIdItem() {
