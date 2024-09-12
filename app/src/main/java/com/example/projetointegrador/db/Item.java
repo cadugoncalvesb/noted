@@ -5,12 +5,16 @@ public class Item {
     public String idList;
     public String nameItem;
     public boolean checked;
+    public String unidade;
+    public int quantidade;
+    public float preco;
 
     public Item(){
 
     }
 
-    public Item(String idList, String nameItem, boolean checked) {
+    public Item(String idList, String nameItem, boolean checked,
+                String unidade, int quantidade, float preco) {
         this.idList = idList;
         this.nameItem = nameItem;
         this.checked = checked;
@@ -46,5 +50,29 @@ public class Item {
 
     public void setChecked(boolean checked) {
         this.checked = checked;
+    }
+
+    public String getUnidade() {
+        return unidade;
+    }
+
+    public void setUnidade(String unidade) {
+        this.unidade = unidade;
+    }
+
+    public int getQuantidade() {
+        return quantidade;
+    }
+
+    public void setQuantidade(int quantidade) {
+        this.quantidade = quantidade;
+    }
+
+    public float getPreco() {
+        return preco;
+    }
+
+    public void setPreco(float preco) {
+        this.preco = preco;
     }
 }

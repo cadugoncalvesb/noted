@@ -7,6 +7,8 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +27,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.divider.MaterialDivider;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,10 +45,8 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ItemActivity extends AppCompatActivity implements OnItemClickListener {
-
     private ActivityItemBinding binding;
     private FirebaseFirestore db;
-    private BottomSheetBinding bottomSheetBinding;
 
     private RecyclerView recyclerViewItens;
     private ItemAdapter itemAdapter;
@@ -56,11 +57,8 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         binding = ActivityItemBinding.inflate(getLayoutInflater());
-        bottomSheetBinding = BottomSheetBinding.inflate(LayoutInflater.from(this));
         FirebaseApp.initializeApp(this);
         db = FirebaseFirestore.getInstance();
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
-        bottomSheetDialog.setContentView(bottomSheetBinding.getRoot());
         setContentView(binding.getRoot());
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -79,66 +77,10 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
         String nameList = getIntent().getStringExtra("nameList");
         binding.textViewNameList.setText(nameList);
 
-        bottomSheetBinding.editTextUnidade.setEnabled(false);
-        bottomSheetBinding.editTextQtd.setEnabled(false);
-        bottomSheetBinding.editTextPreco.setEnabled(false);
-        bottomSheetBinding.editTextUnidade.setAlpha(0.5f);
-        bottomSheetBinding.editTextUnidade.setFocusable(false);
-        bottomSheetBinding.editTextUnidade.setFocusableInTouchMode(false);
-        bottomSheetBinding.editTextQtd.setAlpha(0.5f);
-        bottomSheetBinding.editTextPreco.setAlpha(0.5f);
-        bottomSheetBinding.editTextNewItem.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (!s.toString().isEmpty()) {
-                    bottomSheetBinding.editTextUnidade.setEnabled(true);
-                    bottomSheetBinding.editTextUnidade.setFocusable(true);
-                    bottomSheetBinding.editTextUnidade.setFocusableInTouchMode(true);
-                    bottomSheetBinding.editTextQtd.setEnabled(true);
-                    bottomSheetBinding.editTextPreco.setEnabled(true);
-                    bottomSheetBinding.editTextUnidade.setAlpha(1.0f);
-                    bottomSheetBinding.editTextQtd.setAlpha(1.0f);
-                    bottomSheetBinding.editTextPreco.setAlpha(1.0f);
-                } else {
-                    bottomSheetBinding.editTextUnidade.setEnabled(false);
-                    bottomSheetBinding.editTextUnidade.setFocusable(false);
-                    bottomSheetBinding.editTextUnidade.setFocusableInTouchMode(false);
-                    bottomSheetBinding.editTextQtd.setEnabled(false);
-                    bottomSheetBinding.editTextPreco.setEnabled(false);
-                    bottomSheetBinding.editTextUnidade.setAlpha(0.5f);
-                    bottomSheetBinding.editTextQtd.setAlpha(0.5f);
-                    bottomSheetBinding.editTextPreco.setAlpha(0.5f);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                bottomSheetBinding.textInputLayoutNewItem.setError(null);
-            }
-        });
-
         binding.btnBack.setOnClickListener(v -> finish());
         binding.btnOptions.setOnClickListener(v -> bottomSheetOptions());
-        binding.btnNewItem.setOnClickListener(v -> bottomSheetDialog.show());
+        binding.btnNewItem.setOnClickListener(v -> createItem());
 
-        bottomSheetDialog.setOnShowListener(dialog -> bottomSheetBinding.editTextNewItem.requestFocus());
-
-        bottomSheetBinding.btnAddNewItem.setOnClickListener(v -> {
-            String newItem = bottomSheetBinding.editTextNewItem.getText().toString().trim();
-            if (newItem.isEmpty()) {
-                bottomSheetBinding.textInputLayoutNewItem.setError("Insira um item");
-                return;
-            }
-            String idList = getIntent().getStringExtra("idList");
-            Item item = new Item(idList, newItem, false);
-            addItemFirebase(item);
-
-            bottomSheetBinding.textInputLayoutNewItem.setError(null);
-            bottomSheetBinding.editTextNewItem.setText("");
-        });
     }
 
     private void bottomSheetOptions() {
@@ -157,12 +99,12 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
         MaterialButton btnShare = view.findViewById(R.id.btnShare);
         MaterialButton btnLogOut = view.findViewById(R.id.btnlogOut);
         MaterialButton btnDelete = view.findViewById(R.id.btnDelete);
-        MaterialDivider div2 = view.findViewById(R.id.div2);
         MaterialDivider div1 = view.findViewById(R.id.div1);
+        MaterialDivider div2 = view.findViewById(R.id.div2);
 
         btnDelete.setVisibility(View.GONE);
-        div2.setVisibility(View.GONE);
         div1.setVisibility(View.GONE);
+        div2.setVisibility(View.GONE);
         btnShare.setVisibility(View.GONE);
         if (idUser.equals(admin)) {
             div1.setVisibility(View.VISIBLE);
@@ -250,6 +192,59 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
                 });
     }
 
+    //TODO: está adicionando qtd e preco com zero
+    private void createItem() {
+        View view = LayoutInflater.from(this).inflate(R.layout.bottom_sheet, null);
+
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        bottomSheetDialog.setContentView(view);
+        bottomSheetDialog.show();
+
+        TextInputLayout textInputLayoutNewItem = view.findViewById(R.id.textInputLayoutNewItem);
+        EditText editTextNewItem = view.findViewById(R.id.editTextNewItem);
+        EditText editTextUnidade = view.findViewById(R.id.editTextUnidade);
+        EditText editTextQtd = view.findViewById(R.id.editTextQtd);
+        EditText editTextPreco = view.findViewById(R.id.editTextPreco);
+        MaterialButton btnAddNewItem = view.findViewById(R.id.btnAddNewItem);
+
+        bottomSheetDialog.setOnShowListener(dialog -> editTextNewItem.requestFocus());
+
+        btnAddNewItem.setOnClickListener(v -> {
+            String newItem = editTextNewItem.getText().toString().trim();
+            if (newItem.isEmpty()) {
+                textInputLayoutNewItem.setError("Insira um item");
+                return;
+            }
+
+            int quantidade = 0;
+            float preco = 0.0f;
+            String unidade = editTextUnidade.getText().toString().trim();
+
+            String idList = getIntent().getStringExtra("idList");
+            Item item = new Item(idList, newItem, false, unidade, quantidade, preco);
+            addItemFirebase(item);
+
+            textInputLayoutNewItem.setError(null);
+            editTextNewItem.setText("");
+            editTextUnidade.setText("");
+            editTextQtd.setText("");
+            editTextPreco.setText("");
+        });
+
+        editTextNewItem.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                textInputLayoutNewItem.setError(null);
+            }
+        });
+    }
+
     public void addItemFirebase(Item item) {
         String idList = getIntent().getStringExtra("idList");
 
@@ -257,6 +252,9 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
         itemData.put("idList", idList);
         itemData.put("nameItem", item.getNameItem());
         itemData.put("checked", item.checked());
+        itemData.put("unidade", item.getUnidade());
+        itemData.put("quantidade", item.getQuantidade());
+        itemData.put("preco", item.getPreco());
 
         db.collection("lists")
                 .document(idList)
