@@ -36,6 +36,43 @@
                 android:textColor="@color/md_theme_onSurface"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/textViewQtd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Qtd"
+                android:textSize="16sp"
+                android:textColor="@color/md_theme_onSurface"
+                android:layout_marginStart="8dp"/>
+
+            <TextView
+                android:id="@+id/textViewUnidade"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="unidade"
+                android:textSize="16sp"
+                android:textColor="@color/md_theme_onSurface"
+                android:layout_marginStart="2dp"/>
+
+            <TextView
+                android:id="@+id/textViewRS"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="R$"
+                android:textSize="16sp"
+                android:textColor="@color/md_theme_onSurface"
+                android:layout_marginStart="10dp"/>
+
+            <TextView
+                android:id="@+id/textViewPreco"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Preco"
+                android:textSize="16sp"
+                android:textColor="@color/md_theme_onSurface"
+                android:layout_marginStart="3dp"/>
+
         </LinearLayout>
     </LinearLayout>
 

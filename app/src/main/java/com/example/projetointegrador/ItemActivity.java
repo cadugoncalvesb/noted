@@ -210,7 +210,7 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
         MaterialButton btnAddNewItem = view.findViewById(R.id.btnAddNewItem);
         ImageButton imageBtnValues = view.findViewById(R.id.imageBtnValues);
 
-        String[] suggestions = {"l", "ml", "kg", "g"};
+        String[] suggestions = {"L", "ml", "kg", "g"};
         ArrayAdapter<String> adapterSuggestions = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, suggestions);
         editTextUnidade.setAdapter(adapterSuggestions);
 

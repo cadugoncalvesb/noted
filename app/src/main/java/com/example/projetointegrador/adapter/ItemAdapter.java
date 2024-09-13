@@ -43,7 +43,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ItemAdapter.ViewHolder holder, int position) {
         Item item = itemList.get(position);
         holder.textViewNameItem.setText(item.getNameItem());
-        //holder.checkBox.setChecked(item.checked());
+        holder.textViewUnidade.setText(item.getUnidade());
+        holder.textViewQtd.setText(String.valueOf(item.getQuantidade()));
+        holder.textViewPreco.setText(String.valueOf(String.format("%.2f",item.getPreco())));
+
         String idItem = item.getIdItem();
         String idList = item.getIdList();
 
@@ -81,12 +84,18 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         TextView textViewNameItem;
         CheckBox checkBox;
         ImageButton imageBtnDelete;
+        TextView textViewQtd;
+        TextView textViewUnidade;
+        TextView textViewPreco;
 
         public ViewHolder(View itemView, final OnItemClickListener listener) {
             super(itemView);
             textViewNameItem = itemView.findViewById(com.example.projetointegrador.R.id.textViewNameItem);
             checkBox = itemView.findViewById(com.example.projetointegrador.R.id.checkBox);
             imageBtnDelete = itemView.findViewById(com.example.projetointegrador.R.id.imageBtnDelete);
+            textViewQtd = itemView.findViewById(com.example.projetointegrador.R.id.textViewQtd);
+            textViewUnidade = itemView.findViewById(com.example.projetointegrador.R.id.textViewUnidade);
+            textViewPreco = itemView.findViewById(com.example.projetointegrador.R.id.textViewPreco);
 
             imageBtnDelete.setVisibility(View.GONE);
             itemView.setOnClickListener(v -> {
