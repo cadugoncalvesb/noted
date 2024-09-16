@@ -61,33 +61,47 @@
         android:id="@+id/textViewEditName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        android:layout_marginStart="32dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="20dp"
         android:text="Alterar nome"
         android:textSize="18dp"
         android:textColor="@color/md_theme_onSurface"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewName" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewEmail" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/div"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/textViewEditPassword"
+        app:layout_constraintTop_toBottomOf="@+id/textViewEditName" />
 
     <TextView
         android:id="@+id/textViewEditPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="32dp"
+        android:layout_marginVertical="32dp"
+        android:layout_marginStart="20dp"
         android:text="Alterar senha"
         android:textSize="18dp"
         android:textColor="@color/md_theme_onSurface"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewEditName" />
 
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/div1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/btnSignOut"
+        app:layout_constraintTop_toBottomOf="@+id/textViewEditPassword" />
+
     <ImageButton
         android:id="@+id/btnSignOut"
         android:backgroundTint="@android:color/transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="32dp"
+        android:layout_marginVertical="32dp"
+        android:layout_marginStart="20dp"
         android:padding="0dp"
         android:src="@drawable/log_out_outline"
         android:background="?attr/selectableItemBackgroundBorderless"

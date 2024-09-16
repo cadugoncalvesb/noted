@@ -36,6 +36,12 @@ public class AddListActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         binding = ActivityAddListBinding.inflate(getLayoutInflater());
         db = FirebaseFirestore.getInstance();
+        setContentView(binding.getRoot());
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
             System.out.println("User não autenticado");
@@ -43,12 +49,6 @@ public class AddListActivity extends AppCompatActivity {
             return;
         }
         String admin = currentUser.getUid();
-        setContentView(binding.getRoot());
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
         binding.editTextAddNewList.addTextChangedListener(new TextWatcher() {
             @Override
@@ -101,6 +101,7 @@ public class AddListActivity extends AppCompatActivity {
                     Intent intent = new Intent(this, ItemActivity.class);
                     intent.putExtra("idList", idList);
                     intent.putExtra("nameList", nameList);
+                    intent.putExtra("admin", lista.getAdmin());
                     System.out.println("Estado do ID: " + idList);
                     finish();
                     startActivity(intent);
