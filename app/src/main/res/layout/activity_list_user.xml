@@ -53,7 +53,7 @@
         app:icon="@drawable/add"
         app:iconTint="#FFFFFF"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="64dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
