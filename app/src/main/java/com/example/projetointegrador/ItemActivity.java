@@ -219,11 +219,25 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
         editTextQtd.setVisibility(View.GONE);
         editTextPreco.setVisibility(View.GONE);
 
+        final boolean[] values = {false};
         imageBtnValues.setOnClickListener(vv -> {
-            textInputLayoutUnidade.setVisibility(View.VISIBLE);
-            editTextUnidade.setVisibility(View.VISIBLE);
-            editTextQtd.setVisibility(View.VISIBLE);
-            editTextPreco.setVisibility(View.VISIBLE);
+
+            if (values[0]) {
+                textInputLayoutUnidade.setVisibility(View.GONE);
+                editTextUnidade.setVisibility(View.GONE);
+                editTextQtd.setVisibility(View.GONE);
+                editTextPreco.setVisibility(View.GONE);
+
+                imageBtnValues.setImageResource(R.drawable.add);
+            } else {
+                textInputLayoutUnidade.setVisibility(View.VISIBLE);
+                editTextUnidade.setVisibility(View.VISIBLE);
+                editTextQtd.setVisibility(View.VISIBLE);
+                editTextPreco.setVisibility(View.VISIBLE);
+
+                imageBtnValues.setImageResource(R.drawable.remove_outline);
+            }
+            values[0] = !values[0];
         });
         editTextNewItem.requestFocus();
 
