@@ -4,6 +4,7 @@ import static android.content.Intent.getIntent;
 
 import static androidx.core.content.ContextCompat.startActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +25,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.divider.MaterialDivider;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -69,21 +72,27 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
 
             MaterialButton btnShare = bottomSheetView.findViewById(R.id.btnShare);
             MaterialButton btnDelete = bottomSheetView.findViewById(R.id.btnDelete);
-            MaterialDivider div2 = bottomSheetView.findViewById(R.id.div2);
+            MaterialButton btnUpdateNameList = bottomSheetView.findViewById(R.id.btnUpdateNameList);
             MaterialDivider div1 = bottomSheetView.findViewById(R.id.div1);
+            MaterialDivider div2 = bottomSheetView.findViewById(R.id.div2);
+            MaterialDivider div3 = bottomSheetView.findViewById(R.id.div3);
 
             // Ocultar por padrão
             btnDelete.setVisibility(View.GONE);
             btnShare.setVisibility(View.GONE);
-            div2.setVisibility(View.GONE);
+            btnUpdateNameList.setVisibility(View.GONE);
             div1.setVisibility(View.GONE);
+            div2.setVisibility(View.GONE);
+            div3.setVisibility(View.GONE);
 
             // Verifica se o usuário atual é o admin
             if (idUser.equals(admin)) {
                 btnDelete.setVisibility(View.VISIBLE);
                 btnShare.setVisibility(View.VISIBLE);
-                div2.setVisibility(View.VISIBLE);
+                btnUpdateNameList.setVisibility(View.VISIBLE);
                 div1.setVisibility(View.VISIBLE);
+                div2.setVisibility(View.VISIBLE);
+                div3.setVisibility(View.VISIBLE);
             }
 
             bottomSheetView.findViewById(R.id.btnInfo).setOnClickListener(view -> {
@@ -92,6 +101,11 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
                 intent.putExtra("admin", admin);
                 bottomSheetDialog.dismiss();
                 holder.itemView.getContext().startActivity(intent);
+            });
+
+            bottomSheetView.findViewById(R.id.btnUpdateNameList).setOnClickListener(view -> {
+                bottomSheetDialog.dismiss();
+                updateNameList(lista.getNameList(), idList, holder.itemView.getContext());
             });
 
             bottomSheetView.findViewById(R.id.btnShare).setOnClickListener(view -> {
@@ -250,6 +264,58 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.ViewHolder> 
                     System.out.println("Lista e subcoleções deletadas com sucesso");
                 })
                 .addOnFailureListener(e -> Log.e("Firebase", "Erro ao deletar lista"));
+    }
+
+    private void updateNameList(String currentNameList, String idList, Context context) {
+        BottomSheetDialog bottomSheetDialog1 = new BottomSheetDialog(context);
+        View view = LayoutInflater.from(context).inflate(R.layout.bottom_shet_user, null);
+
+        TextInputLayout textInputLayoutEmailUser = view.findViewById(R.id.textInputLayoutEmailUser);
+        TextInputEditText editTextEmailUser = view.findViewById(R.id.editTextEmailUser);
+        MaterialButton btnAddUser = view.findViewById(R.id.btnAddUser);
+        TextView textViewCancel = view.findViewById(R.id.textViewCancel);
+
+        textInputLayoutEmailUser.setHint("Nome da lista");
+        textInputLayoutEmailUser.setHelperText("Informe o novo nome da lista");
+        btnAddUser.setText("Renomear");
+
+        editTextEmailUser.setText(currentNameList);
+        editTextEmailUser.requestFocus();
+
+        textViewCancel.setOnClickListener(vv -> {
+            bottomSheetDialog1.dismiss();
+        });
+
+        btnAddUser.setOnClickListener(v -> {
+            String newNameList = editTextEmailUser.getText().toString().trim();
+            if (newNameList.isEmpty()) {
+                textInputLayoutEmailUser.setError("Informe o novo nome da lista");
+                return;
+            }
+            updateNameListFirebase(newNameList, idList);
+            bottomSheetDialog1.dismiss();
+        });
+        bottomSheetDialog1.setContentView(view);
+        bottomSheetDialog1.show();
+    }
+
+    private void updateNameListFirebase(String newNameList, String idList) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("lists").document(idList)
+                .update("nameList", newNameList)
+                .addOnSuccessListener(aVoid -> {
+                    for (Lista lista : listaList) {
+                        if (lista.getIdList().equals(idList)) {
+                            lista.setNameList(newNameList);
+                            notifyDataSetChanged();
+                            break;
+                        }
+                    }
+                })
+                .addOnFailureListener(error -> {
+                    System.out.println("Deu ruim");
+                });
     }
 
 }

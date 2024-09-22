@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
@@ -22,9 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projetointegrador.adapter.ItemAdapter;
-import com.example.projetointegrador.adapter.ListaAdapter;
 import com.example.projetointegrador.databinding.ActivityItemBinding;
-import com.example.projetointegrador.databinding.BottomSheetBinding;
 import com.example.projetointegrador.db.Item;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
@@ -101,12 +98,16 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
         MaterialButton btnShare = view.findViewById(R.id.btnShare);
         MaterialButton btnLogOut = view.findViewById(R.id.btnlogOut);
         MaterialButton btnDelete = view.findViewById(R.id.btnDelete);
+        MaterialButton btnUpdateNameList = view.findViewById(R.id.btnUpdateNameList);
         MaterialDivider div1 = view.findViewById(R.id.div1);
         MaterialDivider div2 = view.findViewById(R.id.div2);
+        MaterialDivider div3 = view.findViewById(R.id.div3);
 
         btnDelete.setVisibility(View.GONE);
+        btnUpdateNameList.setVisibility(View.GONE);
         div1.setVisibility(View.GONE);
         div2.setVisibility(View.GONE);
+        div3.setVisibility(View.GONE);
         btnShare.setVisibility(View.GONE);
         if (idUser.equals(admin)) {
             div1.setVisibility(View.VISIBLE);
