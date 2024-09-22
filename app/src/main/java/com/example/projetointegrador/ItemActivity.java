@@ -298,6 +298,25 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
                 });
     }
 
+    private void updateItemFirebase(String idList, String idItem, String nameItem, String unidade, int quantidade, float preco) {
+
+        Map<String, Object> updateItem = new HashMap<>();
+        updateItem.put("nameItem", nameItem);
+        updateItem.put("unidade", unidade);
+        updateItem.put("quantidade", quantidade);
+        updateItem.put("preco", preco);
+
+        db.collection("lists").document(idList)
+                .collection("items").document(idItem)
+                .update(updateItem)
+                .addOnSuccessListener(aVoid -> {
+                    System.out.println("Item atualizado com sucesso!");
+                })
+                .addOnFailureListener(error -> {
+                    System.out.println("Falha ao atualizar item");
+                });
+    }
+
     public void logOutList(String idList, String idUser) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -320,7 +339,66 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
 
     @Override
     public void onItemClick(int position) {
+        Item item = itemList.get(position);
+        String idList = getIntent().getStringExtra("idList");
+        String idItem = item.getIdItem();
 
+        String nameItem = item.getNameItem();
+        String unidade = item.getUnidade();
+        int quantidade = item.getQuantidade();
+        float preco = item.getPreco();
+
+        View view = LayoutInflater.from(this).inflate(R.layout.bottom_sheet, null);
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        bottomSheetDialog.setContentView(view);
+        bottomSheetDialog.show();
+
+        TextInputLayout textInputLayoutNewItem = view.findViewById(R.id.textInputLayoutNewItem);
+        EditText editTextNewItem = view.findViewById(R.id.editTextNewItem);
+        AutoCompleteTextView editTextUnidade = view.findViewById(R.id.editTextUnidade);
+        EditText editTextQtd = view.findViewById(R.id.editTextQtd);
+        EditText editTextPreco = view.findViewById(R.id.editTextPreco);
+        MaterialButton btnAddNewItem = view.findViewById(R.id.btnAddNewItem);
+
+        editTextNewItem.setText(nameItem);
+        editTextUnidade.setText(unidade);
+        editTextQtd.setText(String.valueOf(quantidade));
+        editTextPreco.setText(String.valueOf(preco));
+        btnAddNewItem.setText("Atualizar");
+        textInputLayoutNewItem.setHint("Atualize o item");
+        editTextNewItem.requestFocus();
+
+        String[] suggestions = {"L", "ml", "kg", "g"};
+        ArrayAdapter<String> adapterSuggestions = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, suggestions);
+        editTextUnidade.setAdapter(adapterSuggestions);
+
+        btnAddNewItem.setOnClickListener(v -> {
+            String newNameItem = editTextNewItem.getText().toString().trim();
+            String newUnidade = editTextUnidade.getText().toString().trim();
+            int newQuantidade = Integer.parseInt(editTextQtd.getText().toString());
+            float newPreco = Float.parseFloat(editTextPreco.getText().toString());
+
+            if (newNameItem.isEmpty()) {
+                textInputLayoutNewItem.setError("Insira o nome do item");
+                return;
+            }
+
+            updateItemFirebase(idList, idItem, newNameItem, newUnidade, newQuantidade, newPreco);
+            bottomSheetDialog.dismiss();
+        });
+
+        editTextNewItem.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                textInputLayoutNewItem.setError(null);
+            }
+        });
     }
 }
 
