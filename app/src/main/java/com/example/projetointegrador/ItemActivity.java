@@ -175,24 +175,27 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
 
         db.collection("lists")
                 .document(idList)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        Timestamp timestamp = documentSnapshot.getTimestamp("dateCreate");
-                        if (timestamp != null) {
-                            Date date = timestamp.toDate();
-                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-                            String formattedDate = sdf.format(date);
+                .addSnapshotListener(this, ((value, error) -> {
+                    if (error != null) {
+                        System.out.println("Erro ao carregador dados: " + error);
+                    } else {
+                        if (value != null && value.exists()) {
+                            DocumentSnapshot documentSnapshot = value;
+                            Timestamp timestamp = documentSnapshot.getTimestamp("dateCreate");
+                            if (timestamp != null) {
+                                Date date = timestamp.toDate();
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+                                String formattedDate = sdf.format(date);
 
-                            binding.textViewDateCreateList.setText("Criada em: " + formattedDate);
+                                binding.textViewDateCreateList.setText("Criada em: " + formattedDate);
+                            } else {
+                                binding.textViewDateCreateList.setText("Data de criação indisponível");
+                            }
                         } else {
-                            binding.textViewDateCreateList.setText("Data de criação indisponível");
+                            System.out.println("Documento não encontrado");
                         }
                     }
-                })
-                .addOnFailureListener(error -> {
-                    binding.textViewDateCreateList.setText("Erro ao carregar data de criação");
-                });
+                }));
     }
 
     private void createItem() {
