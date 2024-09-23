@@ -371,12 +371,14 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
         bottomSheetDialog.setContentView(view);
         bottomSheetDialog.show();
 
+        TextInputLayout textInputLayoutUnidade = view.findViewById(R.id.textInputLayoutUnidade);
         TextInputLayout textInputLayoutNewItem = view.findViewById(R.id.textInputLayoutNewItem);
         EditText editTextNewItem = view.findViewById(R.id.editTextNewItem);
         AutoCompleteTextView editTextUnidade = view.findViewById(R.id.editTextUnidade);
         EditText editTextQtd = view.findViewById(R.id.editTextQtd);
         EditText editTextPreco = view.findViewById(R.id.editTextPreco);
         MaterialButton btnAddNewItem = view.findViewById(R.id.btnAddNewItem);
+        ImageButton imageBtnValues = view.findViewById(R.id.imageBtnValues);
 
         editTextNewItem.setText(nameItem);
         editTextUnidade.setText(unidade);
@@ -389,6 +391,27 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
         String[] suggestions = {"L", "ml", "kg", "g"};
         ArrayAdapter<String> adapterSuggestions = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, suggestions);
         editTextUnidade.setAdapter(adapterSuggestions);
+
+        final boolean[] values = {false};
+        imageBtnValues.setImageResource(R.drawable.remove_outline);
+        imageBtnValues.setOnClickListener(vv -> {
+            if (values[0]) {
+                textInputLayoutUnidade.setVisibility(View.VISIBLE);
+                editTextUnidade.setVisibility(View.VISIBLE);
+                editTextQtd.setVisibility(View.VISIBLE);
+                editTextPreco.setVisibility(View.VISIBLE);
+
+                imageBtnValues.setImageResource(R.drawable.remove_outline);
+            } else {
+                textInputLayoutUnidade.setVisibility(View.GONE);
+                editTextUnidade.setVisibility(View.GONE);
+                editTextQtd.setVisibility(View.GONE);
+                editTextPreco.setVisibility(View.GONE);
+
+                imageBtnValues.setImageResource(R.drawable.add);
+            }
+            values[0] = !values[0];
+        });
 
         btnAddNewItem.setOnClickListener(v -> {
             String newNameItem = editTextNewItem.getText().toString().trim();

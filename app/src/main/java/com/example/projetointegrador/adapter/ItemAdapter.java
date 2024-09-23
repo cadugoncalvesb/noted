@@ -52,7 +52,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
         holder.checkBox.setOnCheckedChangeListener(null); // Remover listener anterior
         holder.checkBox.setChecked(item.checked());
-        // TODO: precisa estar online
+
         holder.checkBox.setOnCheckedChangeListener((buttonView, checked) -> {
             if (idList == null || idList.isEmpty()) {
                 Log.e("ItemAdapter","ID da lista é nulo ou vazio");
@@ -129,7 +129,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
                 .addOnFailureListener(e -> Log.w("Firebase", "Erro ao atualizar estado do checkbox", e));
     }
 
-    //TODO: precisa estar online
     private void deleteItemFirebase(String idList, String idItem) {
         if (idList == null || idList.isEmpty()) {
             System.out.println("ID da lista é nulo ou vazio no deleteItem");
