@@ -235,6 +235,13 @@ public class ListUserActivity extends AppCompatActivity implements OnItemClickLi
 
     @Override
     public void onItemClick(int position) {
+        String admin = getIntent().getStringExtra("admin");
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        String idUser = currentUser.getUid();
+        if (idUser.equals(admin)){
+
+        }
+        User user = listaUsers.get(position);
 
     }
 }

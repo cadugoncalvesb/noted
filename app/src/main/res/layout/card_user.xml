@@ -43,8 +43,16 @@
                 android:textColor="@color/md_theme_primary"
                 android:visibility="gone"/>
         </LinearLayout>
-
-
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/imageBtnDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/close_outline"
+        android:layout_gravity="end"
+        android:layout_marginTop="25dp"
+        android:layout_marginHorizontal="12dp"
+        android:background="?attr/selectableItemBackgroundBorderless"/>
 
 </com.google.android.material.card.MaterialCardView>

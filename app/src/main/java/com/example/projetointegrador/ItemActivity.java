@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +33,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -73,6 +75,7 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
 
         loadItemFirebase();
         loadDateCreateList();
+        calculateTotal();
 
         String nameList = getIntent().getStringExtra("nameList");
         binding.textViewNameList.setText(nameList);
@@ -198,6 +201,45 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
                 }));
     }
 
+    private void calculateTotal() {
+        String idList = getIntent().getStringExtra("idList");
+
+        db.collection("lists").document(idList)
+                .collection("items")
+                .addSnapshotListener(this, (value, error) -> {
+                    if (error != null) {
+                        System.out.println("Erro ao carregar dados: " + error);
+                        return;  // Sai do método caso haja erro
+                    }
+
+                    if (value != null) {
+                        float total = 0.0f;
+
+                        for (DocumentSnapshot document : value.getDocuments()) {
+                            if (document.contains("preco") && document.contains("quantidade")) {
+                                Double precoDouble = document.getDouble("preco");
+                                Long quantidadeLong = document.getLong("quantidade");
+
+                                if (precoDouble != null && quantidadeLong != null) {
+                                    float preco = precoDouble.floatValue(); // Converte para float
+                                    int quantidade = quantidadeLong.intValue(); // Converte para int
+
+                                    total += preco;
+                                }
+                            }
+                        }
+                        TextView textViewTotal = findViewById(R.id.textViewTotal);
+                        textViewTotal.setText("Total: R$ " + String.format("%.2f", total));
+                        if (total == 0) {
+                            textViewTotal.setVisibility(View.GONE);
+                        } else {
+                            textViewTotal.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+
+    }
+
     private void createItem() {
         View view = LayoutInflater.from(this).inflate(R.layout.bottom_sheet, null);
 
@@ -214,7 +256,7 @@ public class ItemActivity extends AppCompatActivity implements OnItemClickListen
         MaterialButton btnAddNewItem = view.findViewById(R.id.btnAddNewItem);
         ImageButton imageBtnValues = view.findViewById(R.id.imageBtnValues);
 
-        String[] suggestions = {"L", "ml", "kg", "g"};
+        String[] suggestions = {"L", "ml", "uni", "kg", "g"};
         ArrayAdapter<String> adapterSuggestions = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, suggestions);
         editTextUnidade.setAdapter(adapterSuggestions);
 
