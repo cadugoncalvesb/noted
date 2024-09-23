@@ -12,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.projetointegrador.databinding.ActivityProfileBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -32,13 +33,8 @@ public class ProfileActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null) {
-            System.out.println("Usuário não autenticado");
-            return;
-        }
-        String idUser = currentUser.getUid();
-        getNameAndEmailUser(idUser);
+
+        getNameAndEmailUser();
 
         binding.btnBack.setOnClickListener(v -> {
             finish();
@@ -52,22 +48,21 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
     }
-    private void getNameAndEmailUser(String idUser) {
+    private void getNameAndEmailUser() {
         db.collection("users")
-                .document(idUser)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        String name = documentSnapshot.getString("name");
-                        String email = documentSnapshot.getString("email");
-                        if (name != null) binding.textViewName.setText(name);
-                        else binding.textViewName.setText("Nome indisponível no momento");
-                        if (email != null) binding.textViewEmail.setText(email);
-                        else binding.textViewEmail.setText("E-mail indisponível no momento");
+                .document(mAuth.getCurrentUser().getUid())
+                .addSnapshotListener(this, ((value, error) -> {
+                    if (error != null) {
+                        System.out.println("Erro ao carregador dados: " + error);
+                    } else {
+                        if (value != null && value.exists()) {
+                            DocumentSnapshot documentSnapshot = value;
+                            binding.textViewName.setText(documentSnapshot.getString("name"));
+                            binding.textViewEmail.setText(documentSnapshot.getString("email"));
+                        } else {
+                            System.out.println("Documento não encontrado");
+                        }
                     }
-                })
-                .addOnFailureListener(e -> {
-                    System.out.println("Erro ao carregar perfil do usuário");
-                });
+                }));
     }
 }
